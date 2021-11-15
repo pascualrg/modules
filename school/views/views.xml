@@ -9,6 +9,7 @@
         <tree>
           <field name="name"/>
           <field name="classroom"/>
+          <field name="password"/>
         </tree>
       </field>
     </record>
@@ -51,7 +52,7 @@
 
     <!-- Top menu item -->
 
-    <menuitem name="SchoolKLK" id="school.menu_root"/>
+    <menuitem name="School" id="school.menu_root"/>
     <!-- menu categories -->
 
     <menuitem name="Managment" id="school.menu_1" parent="school.menu_root"/>

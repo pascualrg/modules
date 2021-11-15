@@ -1,16 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+import secrets
 
 class student(models.Model):
     _name = 'school.student'
     _description = 'school.student'
 
 
-    name = fields.Char()
+    name = fields.Char(required=True)
     birth_year = fields.Integer()
+    password = fields.Char(compute='_get_password', store=True)
     classroom = fields.Many2one('school.classroom', ondelete='set null', help='La clase a la que va el alumno')
-    teachers = fields.Many2many('school.teacher', related='classroom.teachers')
+    teachers = fields.Many2many('school.teacher', related='classroom.teachers', readonly=True)
+
+    @api.depends('name')
+    def _get_password(self):
+        print(self)
+        for student in self:
+            print(student)
+            student.password = secrets.token_urlsafe(12)
 
 class classroom(models.Model):
     _name = 'school.classroom'
