@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import collections
 from odoo import models, fields, api
 
 
@@ -10,7 +9,9 @@ class student(models.Model):
 
 
     name = fields.Char()
+    birth_year = fields.Integer()
     classroom = fields.Many2one('school.classroom', ondelete='set null', help='La clase a la que va el alumno')
+    teachers = fields.Many2many('school.teacher', related='classroom.teachers')
 
 class classroom(models.Model):
     _name = 'school.classroom'
