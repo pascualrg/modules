@@ -9,7 +9,7 @@ class student(models.Model):
 
 
     name = fields.Char()
-    classrooms = fields.Many2one('school.classroom')
+    classrooms = fields.Many2one('school.classroom', ondelete='set null')
 
 class classroom(models.Model):
     _name = 'school.classroom'
