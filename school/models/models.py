@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api
 from odoo import _
-from odoo.exceptions import Warning
+from odoo.exceptions import ValidationError, Warning
 import secrets
 import logging
+import re
+from odoo.exceptions import ValidationError
+
 
 _logger = logging.getLogger(__name__)
 
@@ -15,18 +18,31 @@ class student(models.Model):
 
     name = fields.Char(required=True)
     birth_year = fields.Integer()
-    password = fields.Char(compute='_get_password', store=True)
+
+    #def _get_password(self): 
+    #    return 
+
+    enrollment_date = fields.Datetime(default=lambda self: fields.Datetime.now())
+    last_login = fields.Datetime()
+    password = fields.Char(default=lambda s:secrets.token_urlsafe(12))
+    dni = fields.Char(string='DNI')
+    profile_pic = fields.Image()
+
     classroom = fields.Many2one('school.classroom', ondelete='set null', help='La clase a la que va el alumno')
     teachers = fields.Many2many('school.teacher', related='classroom.teachers', readonly=True)
 
-    @api.depends('name')
-    def _get_password(self):
-        print(self)
-        for student in self:
-            #print('\033[93m]',student,'\033[93m]')
-            student.password = secrets.token_urlsafe(12)
-            _logger.debug('\033[93m]'+str(student)+'\033[93m]')
+    @api.constrains('dni')
+    def _check_dni(self):
+        regex = re.compile('[0-9]{8}[a-z]\Z',re.I)
+        for s in self:
+            if regex.match(s.dni):
+                print("Coincide")
+            else:
+                raise ValidationError('DNI incorrecto')
 
+    _sql_constraints = [ ('dni_uniq','unique(dni)','El DNI no se puede repetir') ]
+
+    
 class classroom(models.Model):
     _name = 'school.classroom'
     _description = 'school.classroom'
@@ -44,6 +60,7 @@ class classroom(models.Model):
     def _get_delegate(self):
         for c in self:
             c.delegate = c.students[0].id
+
     def _get_teachers(self):
         for c in self:
             c.all_teachers = c.teachers
