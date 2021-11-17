@@ -6,13 +6,72 @@
       <field name="name">school students list</field>
       <field name="model">school.student</field>
       <field name="arch" type="xml">
-        <tree decoration-info="birth_year>2000" decoration-warning="birth_year&lt;1950">
+        <tree decoration-info="birth_year>=2000" decoration-warning="birth_year&lt;1950">
           <field name="name"/>
           <field name="classroom"/>
           <field name="password"/>
           <field name="dni"/>
           <field name="birth_year" sum="Total"/>
         </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="school.quick_create_students_form">
+      <field name="name">school.students form quickcreate</field>
+      <field name="model">school.student</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name"/>
+            <field name="classroom"/>
+            <field name="birth_year"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="school.students_search">
+      <field name="name">school students search</field>
+      <field name="model">school.student</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="birth_year"/>
+          <field name="birth_year" string="Min Year" filter_domain="[('birth_year','>=',self)]"/>
+          <field name="dni"/>
+          <filter name="old" string="Old Students" domain="[('birth_year','&lt;=',2003)]"></filter>
+        </search>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="school.students_kanban">
+      <field name="name">school students kanban</field>
+      <field name="model">school.student</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="classroom" banner_route="/school/banner" on_create="quick_create" quick_create_view="school.quick_create_students_form">
+          <field name="id"></field>
+          <field name="classroom"></field>
+          <templates>
+            <t t-name="kanban-box">
+              <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.classroom.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
+                <a type="open">
+                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="50" width="50" t-att-src="kanban_image('school.student','profile_pic',record.id.value)" t-att-alt="record.name.value"/>
+                </a>
+                <div t-attf-class="oe_kanban_content">
+                  <h4 style="margin-left: 10px;">
+                    <a type="edit">
+                      <field name="name"></field>
+                    </a>
+                  </h4>
+                  <ul>
+                    <li>Classroom: <field name="classroom"></field>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
       </field>
     </record>
 
@@ -48,11 +107,8 @@
               <field name="enrollment_date"/>
               <field name="last_login"/>
               <field name="is_student" class="on_edit_only"/>
-              <field name="classroom"
-                     attrs="{'invisible':[('is_student','=',False)],
-                            'required': [('is_student','=',True)]}"
-                     domain="[('level','=',level)]"
-                     />
+              <field name="classroom" attrs="{'invisible':[('is_student','=',False)],
+                            'required': [('is_student','=',True)]}" domain="[('level','=',level)]" />
               <field name="level"/>
             </group>
             <notebook>
@@ -88,7 +144,7 @@
     <record model="ir.actions.act_window" id="school.action_students_window">
       <field name="name">school students window</field>
       <field name="res_model">school.student</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
     </record>
 
     <record model="ir.actions.act_window" id="school.action_classrooms_window">

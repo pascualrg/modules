@@ -7,9 +7,20 @@ import secrets
 import logging
 import re
 from odoo.exceptions import ValidationError
+from odoo import http
 
 
 _logger = logging.getLogger(__name__)
+
+class banner_city_controller(http.Controller):
+    @http.route('/school/banner', auth='user', type='json')
+    def banner(self):
+        return {
+            'html': """
+                <div  class="negocity_banner" 
+                style="height: 280px; background-size:100%; background-image: url(/school/static/src/img/banner.jpg)">
+                </div> """
+        }
 
 class student(models.Model):
     _name = 'school.student'
