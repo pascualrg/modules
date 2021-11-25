@@ -16,12 +16,18 @@ class player(models.Model):
     _name = 'juego.player'
     _description = 'juego.player'
 
+    username = fields.Char(Required=True)
     name = fields.Char(Required=True)
-    password = fields.Char()
+    password = fields.Char(Required=True)
     avatar = fields.Image(max_width=200, max_height=200)
+    birth_year = fields.Integer()
     register_date = fields.Datetime()
+    level = fields.Integer(readonly=True)
     npcs = fields.One2many('juego.npc', 'player')
     bunker = fields.Many2one('juego.bunker', ondelete='restrict')
+
+    _sql_constraints = [ ('username_uniq','unique(username)','The username is in use, choose another.') ]
+
 
 
 
@@ -51,10 +57,10 @@ class bunker(models.Model):
     npcs = fields.One2many('juego.npc', 'bunker')
     players = fields.One2many('juego.player', 'bunker')
 
-    @api.depends('npcs')
+    @api.depends('npcs', 'players')
     def _get_population(self):
         for b in self:
-            b.population = len(b.npcs)
+            b.population = len(b.npcs) + len(b.players)
 
 # class juego(models.Model):
 #     _name = 'juego.juego'
