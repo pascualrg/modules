@@ -1,0 +1,96 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="juego.players_list">
+      <field name="name">Players</field>
+      <field name="model">juego.player</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="juego.bunkers_list">
+      <field name="name">Bunkers</field>
+      <field name="model">juego.bunker</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="juego.npcs_list">
+      <field name="name">NPCs</field>
+      <field name="model">juego.npc</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="juego.action_window">
+      <field name="name">juego window</field>
+      <field name="res_model">juego.juego</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+
+
+<record model="ir.actions.act_window" id="juego.action_players_window">
+      <field name="name">Players</field>
+      <field name="res_model">juego.player</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+<record model="ir.actions.act_window" id="juego.action_bunkers_window">
+      <field name="name">Bunkers</field>
+      <field name="res_model">juego.bunker</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+<record model="ir.actions.act_window" id="juego.action_npcs_window">
+      <field name="name">NPCs</field>
+      <field name="res_model">juego.npc</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+<!--
+    <record model="ir.actions.server" id="juego.action_server">
+      <field name="name">juego server</field>
+      <field name="model_id" ref="model_juego_juego"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+
+    <menuitem name="Juego" id="juego.menu_root"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Juego" id="juego.menu_1" parent="juego.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Players" id="juego.menu_players_list" parent="juego.menu_1" action="juego.action_players_window"/>
+    <menuitem name="Bunkers" id="juego.menu_bunkers_list" parent="juego.menu_1" action="juego.action_bunkers_window"/>
+    <menuitem name="NPCS" id="juego.menu_npcs_list" parent="juego.menu_1" action="juego.action_npcs_window"/>
+
+  </data>
+</odoo>

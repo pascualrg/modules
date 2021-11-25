@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_juego_player,juego.player,model_juego_player,base.group_user,1,1,1,1
+access_juego_npc,juego.npc,model_juego_npc,base.group_user,1,1,1,1
+access_juego_bunker,juego.bunker,model_juego_bunker,base.group_user,1,1,1,1
