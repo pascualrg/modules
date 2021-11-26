@@ -24,7 +24,7 @@
             <t t-name="kanban-box">
               <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.bunker.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
                 <a type="open">
-                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="50" width="50" t-att-src="kanban_image('juego.player','avatar',record.id.value)" t-att-alt="record.name.value"/>
+                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.player','avatar',record.id.value)" t-att-alt="record.name.value"/>
                 </a>
                 <div t-attf-class="oe_kanban_content">
                   <h4 style="margin-left: 10px;">
@@ -55,15 +55,19 @@
           <sheet>
             <field name="avatar" widget="image"/>
             <group>
+              <separator string="Account Info"></separator>
+              <field name="username"/>
+              <field name="password"/>
+              <field name="register_date"/>
+            </group>
+            <group>
               <separator string="Personal Data"></separator>
               <field name="name"/>
-              <field name="password"/>
               <field name="birth_year"/>
             </group>
             <group>
               <separator string="Game Data"></separator>
               <field name="bunker"/>
-              <field name="register_date"/>
               <field name="level"/>
             </group>
             <notebook>
@@ -99,6 +103,70 @@
       </field>
     </record>
 
+    <record model="ir.ui.view" id="juego.bunkers_kanban">
+      <field name="name">Bunkers</field>
+      <field name="model">juego.bunker</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="name">
+          <field name="id"></field>
+          <field name="name"></field>
+          <templates>
+            <t t-name="kanban-box">
+              <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.name.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
+                <a type="open">
+                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.bunker','bImage',record.id.value)" t-att-alt="record.name.value"/>
+                </a>
+                <div t-attf-class="oe_kanban_content">
+                  <h4 style="margin-left: 10px;">
+                    <a type="edit">
+                      <field name="name"></field>
+                    </a>
+                  </h4>
+                  <ul>
+                    <li>Population: <field name="population"></field></li>
+                    <li>Food: <field name="food"></field></li>
+                    <li>Water: <field name="water"></field></li>
+                    <li>Total bottle caps: <field name="bottle_caps"></field></li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="juego.bunkers_form">
+      <field name="name">Bunkers</field>
+      <field name="model">juego.bunker</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+          </header>
+          <sheet>
+            <field name="bImage" widget="image"/>
+            <group>
+              <separator string="Bunker info"></separator>
+              <field name="name"/>
+              <field name="players"/>
+              <field name="npcs"/>
+            </group>
+            <group>
+              <separator string="Bunker Stats"></separator>
+              <field name="population"/>
+              <field name="max_population"/>
+              <field name="watter_deposits"/>
+              <field name="food_pantries"/>
+              <field name="bottle_caps"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+
   <!--NPCs-->
     <record model="ir.ui.view" id="juego.npcs_list">
       <field name="name">NPCs</field>
@@ -107,6 +175,66 @@
         <tree>
           <field name="name"/>
         </tree>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="juego.npcs_kanban">
+      <field name="name">NPCs</field>
+      <field name="model">juego.npc</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="bunker">
+          <field name="id"></field>
+          <field name="bunker"></field>
+          <templates>
+            <t t-name="kanban-box">
+              <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.bunker.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
+                <a type="open">
+                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.npc','avatar',record.id.value)" t-att-alt="record.name.value"/>
+                </a>
+                <div t-attf-class="oe_kanban_content">
+                  <h4 style="margin-left: 10px;">
+                    <a type="edit">
+                      <field name="name"></field>
+                    </a>
+                  </h4>
+                  <ul>
+                    <li>Bunker: <field name="bunker"></field></li>
+                    <li>Boss: <field name="player"></field></li>
+                    <li>Bottle caps: <field name="bottle_caps"></field></li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="juego.npcs_form">
+      <field name="name">NPCs</field>
+      <field name="model">juego.npc</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+          </header>
+          <sheet>
+            <field name="avatar" widget="image"/>
+            <group>
+              <separator string="Personal Data"></separator>
+              <field name="name"/>
+              <field name="player"/>
+              <field name="bunker"/>
+            </group>
+            <group>
+              <separator string="Stats"></separator>
+              <field name="hunger"/>
+              <field name="thirst"/>
+              <field name="bottle_caps"/>
+            </group>
+          </sheet>
+        </form>
       </field>
     </record>
 
@@ -126,19 +254,19 @@
 <record model="ir.actions.act_window" id="juego.action_players_window">
       <field name="name">Players</field>
       <field name="res_model">juego.player</field>
-      <field name="view_mode">tree,form,kanban</field>
+      <field name="view_mode">kanban,tree,form</field>
     </record>
 
 <record model="ir.actions.act_window" id="juego.action_bunkers_window">
       <field name="name">Bunkers</field>
       <field name="res_model">juego.bunker</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form</field>
     </record>
 
 <record model="ir.actions.act_window" id="juego.action_npcs_window">
       <field name="name">NPCs</field>
       <field name="res_model">juego.npc</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form</field>
     </record>
 
 <!--
