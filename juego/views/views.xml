@@ -101,7 +101,13 @@
       <field name="model">juego.bunker</field>
       <field name="arch" type="xml">
         <tree>
+          <field name="bImage" widget="image" class="imagen_bunker_lista"/>
           <field name="name"/>
+          <field name="population"/>
+          <field name="food"/>
+          <field name="water"/>
+          <field name="bottle_caps"/>
+
         </tree>
       </field>
     </record>
@@ -110,18 +116,18 @@
       <field name="name">Bunkers</field>
       <field name="model">juego.bunker</field>
       <field name="arch" type="xml">
-        <kanban default_group_by="name">
+        <kanban>
           <field name="id"></field>
           <field name="name"></field>
           <templates>
             <t t-name="kanban-box">
               <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.name.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
                 <a type="open">
-                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.bunker','bImage',record.id.value)" t-att-alt="record.name.value"/>
+                  <img style="border-radius: 100px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.bunker','bImage',record.id.value)" t-att-alt="record.name.value"/>
                 </a>
                 <div t-attf-class="oe_kanban_content">
                   <h4 style="margin-left: 10px;">
-                    <a type="edit">
+                    <a type="open">Bunker 
                       <field name="name"></field>
                     </a>
                   </h4>

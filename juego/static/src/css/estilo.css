@@ -1,0 +1,8 @@
+.imagen_bunker_lista{
+    height: 50px;
+    width: 50px;
+}
+
+.imagen_bunker_lista img{
+    border-radius: 100px;
+}
