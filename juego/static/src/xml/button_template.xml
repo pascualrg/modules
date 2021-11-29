@@ -1,0 +1,3 @@
+<t t-name="my_custom_button">
+    <button class="btn btn-primary btn-sm o_tree_custom_button" type="button">My Button</button>
+</t>

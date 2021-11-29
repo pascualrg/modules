@@ -24,7 +24,7 @@
             <t t-name="kanban-box">
               <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.bunker.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
                 <a type="open">
-                  <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.player','avatar',record.id.value)" t-att-alt="record.name.value"/>
+                  <img style="border-radius: 100px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.player','avatar',record.id.value)" t-att-alt="record.name.value"/>
                 </a>
                 <div t-attf-class="oe_kanban_content">
                   <h4 style="margin-left: 10px;">
@@ -33,8 +33,10 @@
                     </a>
                   </h4>
                   <ul>
-                    <li>Name: <field name="name"></field></li>
-                    <li>Bunker: <field name="bunker"></field></li>
+                    <li>Name: <field name="name"></field>
+                    </li>
+                    <li>Bunker: <field name="bunker"></field>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -56,6 +58,11 @@
             <button name="recruit_npc" type="object" string="Recruit NPC" class="oe_highlight"/>
           </header>
           <sheet>
+            <div class="oe_button_box">
+              <button name="gen_random_avatar" class="oe_stat_button" type="object" icon="fa-random">
+                <span class="o_stat_text">Random avatar</span>
+              </button>
+            </div>
             <field name="avatar" widget="image"/>
             <group>
               <separator string="Account Info"></separator>
@@ -74,7 +81,7 @@
               <field name="level"/>
             </group>
             <notebook>
-              <page string="Bunkers">
+              <page string="Bunker">
                 <field name="bunker">
                   <tree>
                     <field name="name"/>
@@ -100,7 +107,7 @@
       <field name="name">Bunkers</field>
       <field name="model">juego.bunker</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree decoration-danger="food&lt;10 or water&lt;10" decoration-warning="food&lt;25 or water&lt;25">
           <field name="bImage" widget="image" class="imagen_bunker_lista"/>
           <field name="name"/>
           <field name="population"/>
@@ -120,10 +127,15 @@
           <field name="id"></field>
           <field name="name"></field>
           <templates>
+            <t t-extend="ImportView.import_button">
+              <t t-jquery="button.o_button_import" t-operation="after">
+                <button name="button_import" type="button" t-if='widget.bunker == "juego.bunker"' class="btn btn-sm btn-default o_import_button o_import_import">Create random bunker</button>
+              </t>
+            </t>
             <t t-name="kanban-box">
               <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.name.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
                 <a type="open">
-                  <img style="border-radius: 100px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.bunker','bImage',record.id.value)" t-att-alt="record.name.value"/>
+                  <img style="border-radius: 100px; border: 1px solid #000" class="oe_kanban_image bunkerIMG" heigh="100" width="100" t-att-src="kanban_image('juego.bunker','bImage',record.id.value)" t-att-alt="record.name.value"/>
                 </a>
                 <div t-attf-class="oe_kanban_content">
                   <h4 style="margin-left: 10px;">
@@ -132,10 +144,14 @@
                     </a>
                   </h4>
                   <ul>
-                    <li>Population: <field name="population"></field></li>
-                    <li>Food: <field name="food"></field></li>
-                    <li>Water: <field name="water"></field></li>
-                    <li>Total bottle caps: <field name="bottle_caps"></field></li>
+                    <li>Population: <field name="population"></field>
+                    </li>
+                    <li>Food: <field name="food"></field>
+                    </li>
+                    <li>Water: <field name="water"></field>
+                    </li>
+                    <li>Total bottle caps: <field name="bottle_caps"></field>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -152,7 +168,7 @@
       <field name="arch" type="xml">
         <form>
           <header>
-           <button name="create_random_bunker" type="object" string="Create random bunker" class="oe_highlight"/>
+            <button name="create_random_bunker" type="object" string="Create random bunker" class="oe_highlight"/>
           </header>
           <sheet>
             <field name="bImage" widget="image"/>
@@ -160,7 +176,40 @@
               <separator string="Bunker info"></separator>
               <field name="name"/>
               <field name="players"/>
-              <field name="npcs"/>
+              <field name="npcs" mode="kanban">
+                <kanban default_group_by="bunker" create="false">                  <!--banner_route="/juego/banner"-->
+                  <field name="id"></field>
+                  <field name="bunker"></field>
+                  <templates>
+                    <t t-name="kanban-box">
+                      <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                        <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.npc', 'avatar', record.id.value, placeholder)}')">
+                        </div>
+                        <div class="oe_kanban_details d-flex flex-column">
+                          <a type="open">
+                            <h4 class="o_kanban_record_title oe_partner_heading">
+                              <field name="name"/>
+                            </h4>
+                          </a>
+                          <ul>
+                            <li>Name: <field name="name"/>
+                            </li>
+                            <li>Hunger: <field name="hunger"/>
+                            </li>
+                            <li>Thirst: <field name="thirst"/>
+                            </li>
+                            <li>Bottle caps: <field name="bottle_caps"/>
+                            </li>
+                            <li>Player: <field name="player"/>
+                            </li>
+
+                          </ul>
+                        </div>
+                      </div>
+                    </t>
+                  </templates>
+                </kanban>
+              </field>
             </group>
             <group>
               <separator string="Bunker Stats"></separator>
@@ -177,13 +226,20 @@
 
 
 
-  <!--NPCs-->
+    <!--NPCs-->
     <record model="ir.ui.view" id="juego.npcs_list">
       <field name="name">NPCs</field>
       <field name="model">juego.npc</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree decoration-danger="thirst&lt;10 or hunger&lt;10" decoration-warning="thirst&lt;20 or hunger&lt;20" create="false">          <!--create="false" para quitar el boton crear en los npcs-->
+          <field name="avatar" widget="image" class="imagen_npc_lista"/>
           <field name="name"/>
+          <field name="hunger"/>
+          <field name="thirst"/>
+          <field name="bottle_caps"/>
+          <field name="player"/>
+          <field name="bunker"/>
+          <field name="level"/>
         </tree>
       </field>
     </record>
@@ -193,7 +249,8 @@
       <field name="name">NPCs</field>
       <field name="model">juego.npc</field>
       <field name="arch" type="xml">
-        <kanban default_group_by="bunker" > <!--banner_route="/juego/banner"-->
+        <!--create="false" para quitar el boton crear en los npcs-->
+        <kanban default_group_by="bunker" create="false">          <!--banner_route="/juego/banner"-->
           <field name="id"></field>
           <field name="bunker"></field>
           <templates>
@@ -204,20 +261,25 @@
                 </a>
                 <div t-attf-class="oe_kanban_content">
                   <h4 style="margin-left: 10px;">
-                    <a type="edit">
+                    <a type="open">
                       <field name="name"></field>
                     </a>
                   </h4>
                   <ul>
-                    <li>Bunker: <field name="bunker"></field></li>
-                    <li>Boss: <field name="player"></field></li>
-                    <li>Bottle caps: <field name="bottle_caps"></field></li>
+                    <li>Bunker: <field name="bunker"></field>
+                    </li>
+                    <li>Boss: <field name="player"></field>
+                    </li>
+                    <li>Bottle caps: <field name="bottle_caps"></field>
+                    </li>
                   </ul>
                 </div>
               </div>
             </t>
           </templates>
         </kanban>
+
+
       </field>
     </record>
 
@@ -226,7 +288,7 @@
       <field name="name">NPCs</field>
       <field name="model">juego.npc</field>
       <field name="arch" type="xml">
-        <form>
+        <form create="false" edit="true" action="false">
           <header>
           </header>
           <sheet>
@@ -251,7 +313,7 @@
 
 
     <!-- actions opening views on models -->
-<!--
+    <!--
     <record model="ir.actions.act_window" id="juego.action_window">
       <field name="name">juego window</field>
       <field name="res_model">juego.juego</field>
@@ -262,26 +324,26 @@
     <!-- server action to the one above -->
 
 
-<record model="ir.actions.act_window" id="juego.action_players_window">
+    <record model="ir.actions.act_window" id="juego.action_players_window">
       <field name="name">Players</field>
       <field name="res_model">juego.player</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
 
-<record model="ir.actions.act_window" id="juego.action_bunkers_window">
+    <record model="ir.actions.act_window" id="juego.action_bunkers_window">
       <field name="name">Bunkers</field>
       <field name="res_model">juego.bunker</field>
       <field name="view_mode">kanban,tree,form</field>
-      
+
     </record>
 
-<record model="ir.actions.act_window" id="juego.action_npcs_window">
+    <record model="ir.actions.act_window" id="juego.action_npcs_window">
       <field name="name">NPCs</field>
       <field name="res_model">juego.npc</field>
       <field name="view_mode">kanban,tree,form</field>
     </record>
 
-<!--
+    <!--
     <record model="ir.actions.server" id="juego.action_server">
       <field name="name">juego server</field>
       <field name="model_id" ref="model_juego_juego"/>

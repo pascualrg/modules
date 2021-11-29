@@ -21,6 +21,8 @@
 
     # any module necessary for this one to work correctly
     'depends': ['base'],
+    'depends': ['base_import'],
+    
 
     # always loaded
     'data': [
@@ -32,5 +34,10 @@
     'demo': [
         'demo/demo.xml',
         'demo/npcs.xml',
+        'demo/bunkers.xml',
+    ],
+
+    'qweb': [
+        "static/src/xml/button_template.xml",
     ],
 }

@@ -37,7 +37,16 @@ class player(models.Model):
     username = fields.Char(required=True)
     name = fields.Char(required=True)
     password = fields.Char(required=True)
-    avatar = fields.Image(max_width=200, max_height=200)
+
+
+    def _get_random_avatar(self):
+            print("test")
+            num = random.randint(1, 20)
+            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            imgLeer = img.read()
+            return base64.b64encode(imgLeer)
+
+    avatar = fields.Image(max_width=200, max_height=200, default=_get_random_avatar)
     birth_year = fields.Integer(default="2003")
     register_date = fields.Datetime(default=lambda self:fields.Datetime.now(), store=True, readonly=True)
     level = fields.Integer(readonly=True)
@@ -50,10 +59,27 @@ class player(models.Model):
     _sql_constraints = [ ('username_uniq','unique(username)','The username is in use, choose another.') ]
 
     def recruit_npc(self):
+            #Antes de poder apretar el botón reclutar, se tendrá que "buscar" un bunker
+            #cuendo encuentre el bunker, pasará de estado "yermo" a estado "bunker"
+            #Luego, ya con bunker, se le creará un npc, el cual "vivirá" en el mismo bunker.
+            #Si en el bunker no hay espacio, el jugador no podrá tener npc
             print("Buscando npcs..")
             #npcs = self.env['juego.npc']._get_npcs()
+
     def find_bunker(self):
-            print("Buscando bunker..")
+        
+        all_bunkers = self.env['juego.bunker'].search([]).ids #Todos los bunkers
+        num_random = random.randint(0, len(all_bunkers))
+        self.bunker = all_bunkers[num_random]
+
+    def gen_random_avatar(self):
+            print("test")
+            num = random.randint(1, 20)
+            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            imgLeer = img.read()
+            for p in self:
+                p.write({'avatar':base64.b64encode(imgLeer)})
+        
 
 class npc(models.Model):
     _name = 'juego.npc'
@@ -83,14 +109,25 @@ class bunker(models.Model):
     _description = 'juego.bunker'
 
     name = fields.Char(required=True)
-    bImage = fields.Image(readonly=True, compute='_get_image_bunker_by_name')
-    water = fields.Float(default=50)
-    food = fields.Float(default=60)
+    bImage = fields.Image(string="Image",readonly=True, compute='_get_image_bunker_by_name')
+
+    def _get_random_value(self):
+        return random.randint(0,100)
+    def _get_random_value2(self):
+        return random.randint(1,3)
+
+    water = fields.Integer(default=_get_random_value, readonly=True)
+    food = fields.Integer(default=_get_random_value, readonly=True)
     bottle_caps = fields.Integer(compute='_get_caps')#compute='_get_caps'
     population = fields.Integer(compute='_get_population')
-    water_deposits = fields.Integer(default=2)
-    food_pantries = fields.Integer(default=1)
-    max_population = fields.Integer(default=10) #Luego con mejoras, la poblacón se podrá aumentar
+    water_deposits = fields.Integer(default=_get_random_value2, readonly=True)
+    food_pantries = fields.Integer(default=_get_random_value2, readonly=True)
+
+    def _get_max_pop(self):
+        print("DEBUG: "+str(self.water_deposits))
+        return 10
+
+    max_population = fields.Integer(default=_get_max_pop, readonly=True)#Luego con mejoras, la poblacón se podrá aumentar
 
     npcs = fields.One2many('juego.npc', 'bunker')
     players = fields.One2many('juego.player', 'bunker')
@@ -104,7 +141,7 @@ class bunker(models.Model):
             if regex.match(b.name) and (int(b.name) < 1000 and int(b.name) > 0): #el nombre del bunker tiene que ser un número entre 100 y 999
                 print("Nombre correcto")
             else:
-                raise ValidationError('Bunker name must be a number between 100 and 999')
+                raise ValidationError('Bunker name must be a number between 100 and 999')  
 
     @api.depends('npcs', 'players')
     def _get_population(self):
@@ -131,7 +168,7 @@ class bunker(models.Model):
     @api.model
     def create_random_bunker(self, vals):
 
-        num = random.randint(100, 103)
+        num = random.randint(101, 999)
 
         name = num
         food = random.randint(0,100)
@@ -149,7 +186,7 @@ class bunker(models.Model):
         
         for b in self:
             if b.name == name:
-                num = random.randint(101, 120)
+                num = random.randint(101, 999)
                 name = num #Si el nombre coincide con los que ya hay, crea otro
 
         vals = {'name': name, 'food':food, 'water':water, 'water_deposits':water_deposits,
