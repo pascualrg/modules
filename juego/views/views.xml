@@ -54,8 +54,9 @@
         <form>
           <header>
             <field name="state" widget="statusbar"></field>
-            <button name="find_bunker" type="object" string="Find Bunker" class="oe_highlight"/>
-            <button name="recruit_npc" type="object" string="Recruit NPC" class="oe_highlight"/>
+            <button attrs="{'invisible':[('state','=','2')]}" domain="[('state','=',state)]" name="find_bunker" type="object" string="Find Bunker" class="oe_highlight"/>
+            <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="leave_bunker" type="object" string="Leave Bunker" class="oe_highlight"/>
+            <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="recruit_npc" type="object" string="Recruit NPC" class="oe_highlight"/>
           </header>
           <sheet>
             <div class="oe_button_box">

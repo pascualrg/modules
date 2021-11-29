@@ -24,7 +24,7 @@ class banner_juego_controller(http.Controller):
         return {
             'html': """
                 <div  class="juego_banner" 
-                style="height: 280px; background-size:100%; background-image: url(/school/static/src/img/banner.jpg)">
+                style="height: 280px; background-size:100%; background-image: url(../static/src/img/banner.jpg)">
                 <p>BANNER</p>
                 </div> """
         }
@@ -42,7 +42,7 @@ class player(models.Model):
     def _get_random_avatar(self):
             print("test")
             num = random.randint(1, 20)
-            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            img = open("juego/static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
             imgLeer = img.read()
             return base64.b64encode(imgLeer)
 
@@ -64,18 +64,39 @@ class player(models.Model):
             #Luego, ya con bunker, se le creará un npc, el cual "vivirá" en el mismo bunker.
             #Si en el bunker no hay espacio, el jugador no podrá tener npc
             print("Buscando npcs..")
-            #npcs = self.env['juego.npc']._get_npcs()
+
+            #all_npcs = self.env['juego.npc'].search([], limit=1).ids #Todos los npcs  
+
+            npc_object = self.env['juego.npc']
+
+            all_npc_object = npc_object.search([])
+
+            if all_npc_object:
+                for obj in all_npc_object:
+                    #npc = npc_object.browse(obj.bottle_caps)
+                    obj.player = self #el valor player del npc cambia al jugador que lo reculta
+                    obj.bunker = self.bunker #el valor bunker del npc cambia al bunker del jugador que lo reculta
+                    print(obj.player)
+
+              
+            #for npc in all_npcs:
+                #print("KLK")
 
     def find_bunker(self):
         
         all_bunkers = self.env['juego.bunker'].search([]).ids #Todos los bunkers
-        num_random = random.randint(0, len(all_bunkers))
-        self.bunker = all_bunkers[num_random]
+        num_random = random.randint(0, (len(all_bunkers)-1)) #numero random desde 0 hasta el numero de bunkers - 1
+        self.bunker = all_bunkers[num_random] #Asigno el bunker random al campo bunker del player
+        self.state = '2' #Cambio el estado de 'yermo' a 'bunker'
+    
+    def leave_bunker(self):
+        self.write({'bunker': [(5, 0, 0)]})#'elimino' o 'limpio' el campo bunker del jugador
+        self.state = '1' #Cambio el estado de 'bunker' a 'yermo'
 
     def gen_random_avatar(self):
             print("test")
             num = random.randint(1, 20)
-            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            img = open("juego/static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
             imgLeer = img.read()
             for p in self:
                 p.write({'avatar':base64.b64encode(imgLeer)})
@@ -97,12 +118,9 @@ class npc(models.Model):
     def _get_caps(self):
         return self.bottle_caps
 
-    def _get_npcs(self):
-        return self
-
-        #return npcs
-
-
+    @api.model
+    def change_player(npcRand, ply):
+        npcRand.player = ply
 
 class bunker(models.Model):
     _name = 'juego.bunker'
@@ -116,18 +134,13 @@ class bunker(models.Model):
     def _get_random_value2(self):
         return random.randint(1,3)
 
-    water = fields.Integer(default=_get_random_value, readonly=True)
-    food = fields.Integer(default=_get_random_value, readonly=True)
+    water = fields.Integer(default= lambda r: random.randint(0,100), readonly=True)
+    food = fields.Integer(default= lambda r: random.randint(0,100), readonly=True)
     bottle_caps = fields.Integer(compute='_get_caps')#compute='_get_caps'
     population = fields.Integer(compute='_get_population')
-    water_deposits = fields.Integer(default=_get_random_value2, readonly=True)
-    food_pantries = fields.Integer(default=_get_random_value2, readonly=True)
-
-    def _get_max_pop(self):
-        print("DEBUG: "+str(self.water_deposits))
-        return 10
-
-    max_population = fields.Integer(default=_get_max_pop, readonly=True)#Luego con mejoras, la poblacón se podrá aumentar
+    water_deposits = fields.Integer(default= lambda r: random.randint(1,3), readonly=True)
+    food_pantries = fields.Integer(default= lambda r: random.randint(1,3), readonly=True)
+    max_population = fields.Integer(compute='_get_max_pop')#Luego con mejoras, la poblacón se podrá aumentar
 
     npcs = fields.One2many('juego.npc', 'bunker')
     players = fields.One2many('juego.player', 'bunker')
@@ -154,6 +167,10 @@ class bunker(models.Model):
             b.bottle_caps = 0 #Si no hay npcs, será 0
             for npc in b.npcs:
                b.bottle_caps += npc._get_caps()
+    
+    def _get_max_pop(self):
+        for b in self:
+            b.max_population = b.water_deposits*5 + b.food_pantries*5
     
     def _get_image_bunker_by_name(self):
         for b in self:
