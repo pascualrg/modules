@@ -84,11 +84,11 @@
             <group>
               <separator string="Game Data"></separator>
               <field name="bunker">
-                  <tree>
-                    <field name="bImage"/>
-                    <field name="name"/>
-                  </tree>
-                </field>
+                <tree>
+                  <field name="bImage"/>
+                  <field name="name"/>
+                </tree>
+              </field>
             </group>
             <notebook>
               <page string="NPCs">
@@ -202,39 +202,6 @@
             <group>
               <separator string="Bunker info"></separator>
               <field name="name"/>
-              <field name="players"/>
-              <field name="npcs" mode="kanban">
-                <kanban default_group_by="bunker" create="false">                  <!--banner_route="/juego/banner"-->
-                  <field name="id"></field>
-                  <field name="bunker"></field>
-                  <templates>
-                    <t t-name="kanban-box">
-                      <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
-                        <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.npc', 'avatar', record.id.value, placeholder)}')">
-                        </div>
-                        <div class="oe_kanban_details d-flex flex-column">
-                          <a type="open">
-                            <h4 class="o_kanban_record_title oe_partner_heading">
-                              <field name="name"/>
-                            </h4>
-                          </a>
-                          <ul>
-                            <li>Hunger: <field name="hunger"/>
-                            </li>
-                            <li>Thirst: <field name="thirst"/>
-                            </li>
-                            <li>Bottle caps: <field name="bottle_caps"/>
-                            </li>
-                            <li>Player: <field name="player"/>
-                            </li>
-
-                          </ul>
-                        </div>
-                      </div>
-                    </t>
-                  </templates>
-                </kanban>
-              </field>
             </group>
             <group>
               <separator string="Bunker Stats"></separator>
@@ -244,6 +211,70 @@
               <field name="food_pantries"/>
               <field name="bottle_caps"/>
             </group>
+            <notebook>
+              <page string="NPCs">
+                <field name="npcs" mode="kanban">
+                  <kanban default_group_by="bunker" create="false">                    <!--banner_route="/juego/banner"-->
+                    <field name="id"></field>
+                    <field name="bunker"></field>
+                    <templates>
+                      <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                          <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.npc', 'avatar', record.id.value, placeholder)}')">
+                          </div>
+                          <div class="oe_kanban_details d-flex flex-column">
+                            <a type="open">
+                              <h4 class="o_kanban_record_title oe_partner_heading">
+                                <field name="name"/>
+                              </h4>
+                            </a>
+                            <ul>
+                              <li>Hunger: <field name="hunger"/>
+                              </li>
+                              <li>Thirst: <field name="thirst"/>
+                              </li>
+                              <li>Bottle caps: <field name="bottle_caps"/>
+                              </li>
+                              <li>Player: <field name="player"/>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </t>
+                    </templates>
+                  </kanban>
+                </field>
+              </page>
+              <page string="Players">
+                <field name="players" mode="kanban">
+                  <kanban create="false">
+                    <field name="id"></field>
+                    <field name="bunker"></field>
+                    <templates>
+                      <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                          <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.player', 'avatar', record.id.value, placeholder)}')">
+                          </div>
+                          <div class="oe_kanban_details d-flex flex-column">
+                            <a type="open">
+                              <h4 class="o_kanban_record_title oe_partner_heading">
+                                <field name="username"/>
+                              </h4>
+                            </a>
+                            <ul>
+                              <li>Location: <field name="state"/>
+                              </li>
+                              <li>Name: <field name="name"/>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </t>
+                    </templates>
+                  </kanban>
+                </field>
+              </page>
+            </notebook>
           </sheet>
         </form>
       </field>
@@ -275,7 +306,7 @@
       <field name="model">juego.npc</field>
       <field name="arch" type="xml">
         <!--create="false" para quitar el boton crear en los npcs-->
-        <kanban default_group_by="bunker" create="false">          <!--banner_route="/juego/banner"-->
+        <kanban default_group_by="player" create="false">          <!--banner_route="/juego/banner"-->
           <field name="id"></field>
           <field name="bunker"></field>
           <templates>

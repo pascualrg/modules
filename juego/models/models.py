@@ -120,12 +120,12 @@ class npc(models.Model):
     _description = 'juego.npc'
 
     name = fields.Char()
-    avatar = fields.Image()
+    avatar = fields.Image(max_width=200, max_height=200,)
     hunger = fields.Float()
     thirst = fields.Float()
     bottle_caps = fields.Integer()
     player = fields.Many2one(string='Boss', comodel_name='juego.player', ondelete='set null')
-    bunker = fields.Many2one('juego.bunker', ondelete='restrict')
+    bunker = fields.Many2one('juego.bunker', related='player.bunker', ondelete='restrict')
     level = fields.Integer()
 
     def _get_caps(self):
