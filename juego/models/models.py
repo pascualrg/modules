@@ -65,22 +65,33 @@ class player(models.Model):
             #Si en el bunker no hay espacio, el jugador no podrá tener npc
             print("Buscando npcs..")
 
-            #all_npcs = self.env['juego.npc'].search([], limit=1).ids #Todos los npcs  
-
             npc_object = self.env['juego.npc']
-
             all_npc_object = npc_object.search([])
 
             if all_npc_object:
-                for obj in all_npc_object:
-                    #npc = npc_object.browse(obj.bottle_caps)
-                    obj.player = self #el valor player del npc cambia al jugador que lo reculta
-                    obj.bunker = self.bunker #el valor bunker del npc cambia al bunker del jugador que lo reculta
-                    print(obj.player)
+                quedanNpc = False
+                repetido = True
 
-              
-            #for npc in all_npcs:
-                #print("KLK")
+                for npc in all_npc_object:
+                        print(npc.player)
+                        if not npc.player:#Si no hay un jugador en algun npc, quedanNpc = verdadero
+                            quedanNpc=True
+
+                if not quedanNpc:#Si no quedan npcs que asignar avisará
+                    raise ValidationError('No quedan NPCs que asignar')
+                else:
+                    while repetido:
+                        num_random = random.randint(0, (len(all_npc_object)-1))
+                        if not all_npc_object[num_random].player:
+                            print("Se ha asignado: "+all_npc_object[num_random].name)
+                            all_npc_object[num_random].player = self
+                            all_npc_object[num_random].bunker = self.bunker
+                            repetido=False
+                        else:
+                            #print("Ya esta asignado")
+                            if not quedanNpc:
+                                repetido=False
+                                raise ValidationError('No quedan NPCs que asignar')
 
     def find_bunker(self):
         
@@ -92,6 +103,8 @@ class player(models.Model):
     def leave_bunker(self):
         self.write({'bunker': [(5, 0, 0)]})#'elimino' o 'limpio' el campo bunker del jugador
         self.state = '1' #Cambio el estado de 'bunker' a 'yermo'
+        self.write({'npcs': [(5, 0, 0)]})#Se considerá que abandona a los npcs en el bunker
+        #raise ValidationError('Todos los NPCs abandonaron al jugado al salir este del bunker')
 
     def gen_random_avatar(self):
             print("test")
