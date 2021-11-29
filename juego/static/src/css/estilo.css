@@ -8,6 +8,11 @@
     width: 50px;
 }
 
+.imagen_player_lista{
+    height: 30px;
+    width: 30px;
+}
+
 .imagen_bunker_lista img{
     border-radius: 100px;
 }

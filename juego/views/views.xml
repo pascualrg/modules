@@ -8,7 +8,11 @@
       <field name="model">juego.player</field>
       <field name="arch" type="xml">
         <tree>
+          <field name="avatar" widget="image" class="imagen_player_lista"/>
+          <field name="username"/>
           <field name="name"/>
+          <field name="state" string="Location"/>
+
         </tree>
       </field>
     </record>
@@ -17,9 +21,10 @@
       <field name="name">Players</field>
       <field name="model">juego.player</field>
       <field name="arch" type="xml">
-        <kanban default_group_by="bunker">
+        <kanban default_group_by="state">
           <field name="id"></field>
           <field name="bunker"></field>
+          <field name="state"></field>
           <templates>
             <t t-name="kanban-box">
               <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.bunker.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
@@ -35,7 +40,7 @@
                   <ul>
                     <li>Name: <field name="name"></field>
                     </li>
-                    <li>Bunker: <field name="bunker"></field>
+                    <li attrs="{'invisible':[('state','=','1')]}">Bunker: <field name="bunker"></field>
                     </li>
                   </ul>
                 </div>
@@ -78,22 +83,43 @@
             </group>
             <group>
               <separator string="Game Data"></separator>
-              <field name="bunker"/>
-              <field name="level"/>
-            </group>
-            <notebook>
-              <page string="Bunker">
-                <field name="bunker">
+              <field name="bunker">
                   <tree>
+                    <field name="bImage"/>
                     <field name="name"/>
                   </tree>
                 </field>
-              </page>
+            </group>
+            <notebook>
               <page string="NPCs">
-                <field name="npcs">
-                  <tree>
-                    <field name="name"/>
-                  </tree>
+                <field name="npcs" mode="kanban">
+                  <kanban default_group_by="bunker" create="false">                    <!--banner_route="/juego/banner"-->
+                    <field name="id"></field>
+                    <field name="bunker"></field>
+                    <templates>
+                      <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                          <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.npc', 'avatar', record.id.value, placeholder)}')">
+                          </div>
+                          <div class="oe_kanban_details d-flex flex-column">
+                            <a type="open">
+                              <h4 class="o_kanban_record_title oe_partner_heading">
+                                <field name="name"/>
+                              </h4>
+                            </a>
+                            <ul>
+                              <li>Hunger: <field name="hunger"/>
+                              </li>
+                              <li>Thirst: <field name="thirst"/>
+                              </li>
+                              <li>Bottle caps: <field name="bottle_caps"/>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </t>
+                    </templates>
+                  </kanban>
                 </field>
               </page>
             </notebook>
@@ -193,8 +219,6 @@
                             </h4>
                           </a>
                           <ul>
-                            <li>Name: <field name="name"/>
-                            </li>
                             <li>Hunger: <field name="hunger"/>
                             </li>
                             <li>Thirst: <field name="thirst"/>
@@ -289,7 +313,7 @@
       <field name="name">NPCs</field>
       <field name="model">juego.npc</field>
       <field name="arch" type="xml">
-        <form create="false" edit="true" action="false">
+        <form create="false" edit="false" action="false">
           <header>
           </header>
           <sheet>
