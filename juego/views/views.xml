@@ -60,7 +60,7 @@
           <header>
             <field name="state" widget="statusbar"></field>
             <button attrs="{'invisible':[('state','=','2')]}" domain="[('state','=',state)]" name="find_bunker" type="object" string="Find Bunker" class="oe_highlight"/>
-            <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="leave_bunker" type="object" string="Leave Bunker" class="oe_highlight"/>
+            <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="leave_bunker" type="object" string="Leave Bunker" confirm="Are you sure you want to do this? All npc will stop being with you" class="oe_highlight"/>
             <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="recruit_npc" type="object" string="Recruit NPC" class="oe_highlight"/>
           </header>
           <sheet>
@@ -83,17 +83,12 @@
             </group>
             <group>
               <separator string="Game Data"></separator>
-              <field name="bunker">
-                <tree>
-                  <field name="bImage"/>
-                  <field name="name"/>
-                </tree>
-              </field>
+              <field name="bunker"></field>
             </group>
             <notebook>
               <page string="NPCs">
                 <field name="npcs" mode="kanban">
-                  <kanban default_group_by="bunker" create="false">                    <!--banner_route="/juego/banner"-->
+                  <kanban create="false">
                     <field name="id"></field>
                     <field name="bunker"></field>
                     <templates>
@@ -115,6 +110,9 @@
                               <li>Bottle caps: <field name="bottle_caps"/>
                               </li>
                             </ul>
+
+                          <button name="leave_bunker_npc" type="object" string="Leave bunker" class="btn btn-danger o_form_button_delete">Leave npc</button>
+
                           </div>
                         </div>
                       </t>
@@ -348,7 +346,7 @@
           <header>
           </header>
           <sheet>
-            <field name="avatar" widget="image"/>
+            <field name="avatar" widget="image" class="imagen_npc_kanban"/>
             <group>
               <separator string="Personal Data"></separator>
               <field name="name"/>

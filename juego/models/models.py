@@ -8,6 +8,7 @@ import random
 import logging
 from datetime import datetime, timedelta
 from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from odoo import http
 import base64
 import re
@@ -42,7 +43,7 @@ class player(models.Model):
     def _get_random_avatar(self):
             print("test")
             num = random.randint(1, 20)
-            img = open("juego/static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
             imgLeer = img.read()
             return base64.b64encode(imgLeer)
 
@@ -58,6 +59,14 @@ class player(models.Model):
 
     _sql_constraints = [ ('username_uniq','unique(username)','The username is in use, choose another.') ]
 
+    @api.onchange('birth_year')
+    def _onchange_birth_year(self):
+        now = datetime.now()
+        if self.birth_year > (now.year - 18):
+            self.birth_year = now.year - 18
+            return {'warning':{'title':'Insufficient age', 'message':'You must be of legal age to play (18)'}}
+            
+
     def recruit_npc(self):
             #Antes de poder apretar el botón reclutar, se tendrá que "buscar" un bunker
             #cuendo encuentre el bunker, pasará de estado "yermo" a estado "bunker"
@@ -68,30 +77,40 @@ class player(models.Model):
             npc_object = self.env['juego.npc']
             all_npc_object = npc_object.search([])
 
-            if all_npc_object:
-                quedanNpc = False
-                repetido = True
+            bunker_pop = self.bunker.population
+            bunker_max_pop = self.bunker.max_population
+            print(bunker_pop)
+            print(bunker_max_pop)
 
-                for npc in all_npc_object:
-                        print(npc.player)
-                        if not npc.player:#Si no hay un jugador en algun npc, quedanNpc = verdadero
-                            quedanNpc=True
+            if bunker_pop < bunker_max_pop:
+                if all_npc_object:
+                    quedanNpc = False
+                    repetido = True
 
-                if not quedanNpc:#Si no quedan npcs que asignar avisará
-                    raise ValidationError('No quedan NPCs que asignar')
-                else:
-                    while repetido:
-                        num_random = random.randint(0, (len(all_npc_object)-1))
-                        if not all_npc_object[num_random].player:
-                            print("Se ha asignado: "+all_npc_object[num_random].name)
-                            all_npc_object[num_random].player = self
-                            all_npc_object[num_random].bunker = self.bunker
-                            repetido=False
-                        else:
-                            #print("Ya esta asignado")
-                            if not quedanNpc:
+                    for npc in all_npc_object:
+                            print(npc.player)
+                            if not npc.player:#Si no hay un jugador en algun npc, quedanNpc = verdadero
+                                quedanNpc=True
+
+                    if not quedanNpc:#Si no quedan npcs que asignar avisará
+                        raise ValidationError('No quedan NPCs que asignar')
+                    else:
+                        while repetido:
+                            num_random = random.randint(0, (len(all_npc_object)-1))
+                            if not all_npc_object[num_random].player:
+                                print("Se ha asignado: "+all_npc_object[num_random].name)
+                                all_npc_object[num_random].player = self
+                                all_npc_object[num_random].bunker = self.bunker
                                 repetido=False
-                                raise ValidationError('No quedan NPCs que asignar')
+                            else:
+                                #print("Ya esta asignado")
+                                if not quedanNpc:
+                                    repetido=False
+                                    raise ValidationError('No quedan NPCs que asignar')
+            else:
+                raise UserError('This bunker has reached its maximum capacity, upgrade it to recruit new npc.')
+                return {'warning':{'title':'Full bunker', 'message':'This bunker has reached its maximum capacity, upgrade it to recruit new npc.'}}
+        
 
     def find_bunker(self):
         
@@ -109,7 +128,7 @@ class player(models.Model):
     def gen_random_avatar(self):
             print("test")
             num = random.randint(1, 20)
-            img = open("juego/static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
             imgLeer = img.read()
             for p in self:
                 p.write({'avatar':base64.b64encode(imgLeer)})
@@ -131,15 +150,15 @@ class npc(models.Model):
     def _get_caps(self):
         return self.bottle_caps
 
-    @api.model
-    def change_player(npcRand, ply):
-        npcRand.player = ply
+    def leave_bunker_npc(self):
+        self.write({'bunker': [(5, 0, 0)]})#'elimino' o 'limpio' el campo bunker del npc
+        self.write({'player': [(5, 0, 0)]})#Abandona el jugador
 
 class bunker(models.Model):
     _name = 'juego.bunker'
     _description = 'juego.bunker'
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, default='100')
     bImage = fields.Image(string="Image",readonly=True, compute='_get_image_bunker_by_name')
 
     def _get_random_value(self):
@@ -223,7 +242,11 @@ class bunker(models.Model):
                     'food_pantries':food_pantries, 'max_population':max_population, 'bImage':bImage}
         res = super(bunker, self).create(vals)
         return res
-                
+    
+    @api.onchange('name')
+    def _onchange_name(self):
+        if int(self.name)<100:
+            return {'warning':{'title':'Wrong bunker name', 'message':'Bunker name must be a number between 100 and 999'}}
             
                 
 
