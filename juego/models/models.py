@@ -51,11 +51,12 @@ class player(models.Model):
     birth_year = fields.Integer(default="2003")
     register_date = fields.Datetime(default=lambda self:fields.Datetime.now(), store=True, readonly=True)
     level = fields.Integer(readonly=True)
-    state = fields.Selection([('1','Wilderness'),('2', 'Bunker')],default='1')
+    state = fields.Selection([('1','Wasteland'),('2', 'Bunker')],default='1')
 
    
     npcs = fields.One2many('juego.npc', 'player', readonly=True)
     bunker = fields.Many2one('juego.bunker', ondelete='restrict', readonly=True)
+    bunkerImg = fields.Image(related='bunker.bImage')
 
     _sql_constraints = [ ('username_uniq','unique(username)','The username is in use, choose another.') ]
 
@@ -101,6 +102,7 @@ class player(models.Model):
                                 print("Se ha asignado: "+all_npc_object[num_random].name)
                                 all_npc_object[num_random].player = self
                                 all_npc_object[num_random].bunker = self.bunker
+                                all_npc_object[num_random].state = '2'
                                 repetido=False
                             else:
                                 #print("Ya esta asignado")
@@ -146,6 +148,9 @@ class npc(models.Model):
     player = fields.Many2one(string='Boss', comodel_name='juego.player', ondelete='set null')
     bunker = fields.Many2one('juego.bunker', related='player.bunker', ondelete='restrict')
     level = fields.Integer()
+    state = fields.Selection([('1','Wasteland'),('2', 'Bunker')],default='1')
+    wastelandsearchs = fields.One2many('juego.wastelandsearch', 'npc')
+
 
     def _get_caps(self):
         return self.bottle_caps
@@ -153,6 +158,22 @@ class npc(models.Model):
     def leave_bunker_npc(self):
         self.write({'bunker': [(5, 0, 0)]})#'elimino' o 'limpio' el campo bunker del npc
         self.write({'player': [(5, 0, 0)]})#Abandona el jugador
+        self.state = '1'
+
+    def start_searching(self):
+        print("incio viaje")
+
+        self.state="1"
+
+        numRand = random.randint(0,1000)
+        name = self.name+"_s_"+str(numRand)
+        start = datetime.now()
+        hours = random.randint(0,6)
+        
+        vals = {'name': name, 'start':start, 'hours':hours, 'npc':self.id}
+
+        self.env['juego.wastelandsearch'].create_searching(vals)
+
 
 class bunker(models.Model):
     _name = 'juego.bunker'
@@ -247,6 +268,23 @@ class bunker(models.Model):
     def _onchange_name(self):
         if int(self.name)<100:
             return {'warning':{'title':'Wrong bunker name', 'message':'Bunker name must be a number between 100 and 999'}}
-            
-                
+
+
+class wastelandsearch(models.Model):
+    _name = 'juego.wastelandsearch'
+    _description = 'juego.wastelandsearch'
+
+    name = fields.Char()
+    start = fields.Datetime()
+    finish = fields.Datetime()
+    hours = fields.Integer()
+    jornada = fields.Integer(default=24)
+    npc = fields.Many2one(comodel_name='juego.npc', ondelete='set null')
+
+    @api.model
+    def create_searching(self, vals):
+
+        res = super(wastelandsearch, self).create(vals)
+        return res
+
 

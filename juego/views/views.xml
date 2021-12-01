@@ -81,12 +81,13 @@
               <field name="name"/>
               <field name="birth_year"/>
             </group>
-            <group>
+            <group attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]">
               <separator string="Game Data"></separator>
-              <field name="bunker"></field>
+              <!--<field name="bunker" type="open" />-->
+              <field name="bunkerImg" string="Player bunker" class="imagen_bunker_lista" type="open" widget="image"/>
             </group>
             <notebook>
-              <page string="NPCs">
+              <page string="NPCs" attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]">
                 <field name="npcs" mode="kanban">
                   <kanban create="false">
                     <field name="id"></field>
@@ -103,16 +104,18 @@
                               </h4>
                             </a>
                             <ul>
+                            <!--
                               <li>Hunger: <field name="hunger"/>
                               </li>
                               <li>Thirst: <field name="thirst"/>
                               </li>
                               <li>Bottle caps: <field name="bottle_caps"/>
                               </li>
+                              -->
+                              <li>Location: <field name="state"/></li>
                             </ul>
-
-                          <button name="leave_bunker_npc" type="object" string="Leave bunker" class="btn btn-danger o_form_button_delete">Leave npc</button>
-
+                            <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="start_searching" type="object" string="Go Search" class="btn btn-primary oe_kanban_action oe_kanban_action_button">Go search</button>
+                            <button attrs="{'invisible':[('state','=','1')]}" domain="[('state','=',state)]" name="leave_bunker_npc" type="object" string="Leave bunker" class="btn btn-danger o_form_button_delete" confirm="Are you sure you want to do this? This npc is going to leave you ">Leave npc</button>
                           </div>
                         </div>
                       </t>
@@ -262,6 +265,7 @@
                             <ul>
                               <li>Location: <field name="state"/>
                               </li>
+                              <!--<li>Progress search: <field name="wastelandsearchs" widget="gauge" /></li>-->
                               <li>Name: <field name="name"/>
                               </li>
                             </ul>
@@ -295,6 +299,24 @@
           <field name="bunker"/>
           <field name="level"/>
         </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="juego.npcs_search">
+      <field name="name">NPC Search</field>
+      <field name="model">juego.npc</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="player"/>
+          <field name="level"/>
+          <filter name="sedientos" string="Thirsty NPCs" domain="[('thirst','&lt;=',9)]"></filter>
+          <filter name="hambrientos" string="Hungry NPCs" domain="[('hunger','&lt;=',9)]"></filter>
+          <field name="bottle_caps" string="Minimal bottle caps" filter_domain="[('bottle_caps','>=',self)]"/>
+          <filter name="agrupar_jefes" string="Group by Boss" context="{'group_by':'player'}"></filter>
+          <filter name="agrupar_location" string="Group by Location" context="{'group_by':'state'}"></filter>
+
+        </search>
       </field>
     </record>
 
@@ -344,6 +366,7 @@
       <field name="arch" type="xml">
         <form create="false" edit="false" action="false">
           <header>
+            <field name="state" widget="statusbar"></field>
           </header>
           <sheet>
             <field name="avatar" widget="image" class="imagen_npc_kanban"/>
@@ -364,6 +387,18 @@
         </form>
       </field>
     </record>
+
+    <!--Wasteland searchs-->
+    <record model="ir.ui.view" id="juego.wastelandsearchs_calendar">
+      <field name="name">Wasteland Search</field>
+      <field name="model">juego.wastelandsearch</field>
+      <field name="arch" type="xml">
+        <calendar quick_add="False" mode="week" string="Wasteland Search" date_start="start" date_delay="hours" color="npc"><!--date_finish="" -->
+        </calendar>
+      </field>
+    </record>
+
+
 
 
     <!-- actions opening views on models -->
@@ -397,6 +432,12 @@
       <field name="view_mode">kanban,tree,form</field>
     </record>
 
+    <record model="ir.actions.act_window" id="juego.action_wastelandsearchs_window">
+      <field name="name">Wastelands searchs</field>
+      <field name="res_model">juego.wastelandsearch</field>
+      <field name="view_mode">calendar</field>
+    </record>
+
     <!--
     <record model="ir.actions.server" id="juego.action_server">
       <field name="name">juego server</field>
@@ -424,7 +465,8 @@
 
     <menuitem name="Players" id="juego.menu_players_list" parent="juego.menu_1" action="juego.action_players_window"/>
     <menuitem name="Bunkers" id="juego.menu_bunkers_list" parent="juego.menu_1" action="juego.action_bunkers_window"/>
-    <menuitem name="NPCS" id="juego.menu_npcs_list" parent="juego.menu_1" action="juego.action_npcs_window"/>
+    <menuitem name="NPCs" id="juego.menu_npcs_list" parent="juego.menu_1" action="juego.action_npcs_window"/>
+    <menuitem name="Wasteland searchs" id="juego.menu_wastelandsearch_calendar" parent="juego.menu_1" action="juego.action_wastelandsearchs_window"/>
 
   </data>
 </odoo>
