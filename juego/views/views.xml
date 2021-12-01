@@ -199,6 +199,11 @@
             <button name="create_random_bunker" type="object" string="Create random bunker" class="oe_highlight"/>
           </header>
           <sheet>
+          <div class="oe_button_box">
+              <button name="upgrade_bunker" class="oe_stat_button" type="object" icon="fa-level-up">
+                <span class="o_stat_text">Upgrade bunker</span>
+              </button>
+            </div>
             <field name="bImage" widget="image"/>
             <group>
               <separator string="Bunker info"></separator>

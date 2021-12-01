@@ -43,7 +43,7 @@ class player(models.Model):
     def _get_random_avatar(self):
             print("test")
             num = random.randint(1, 20)
-            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            img = open("juego/static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
             imgLeer = img.read()
             return base64.b64encode(imgLeer)
 
@@ -117,9 +117,13 @@ class player(models.Model):
     def find_bunker(self):
         
         all_bunkers = self.env['juego.bunker'].search([]).ids #Todos los bunkers
-        num_random = random.randint(0, (len(all_bunkers)-1)) #numero random desde 0 hasta el numero de bunkers - 1
-        self.bunker = all_bunkers[num_random] #Asigno el bunker random al campo bunker del player
-        self.state = '2' #Cambio el estado de 'yermo' a 'bunker'
+        if all_bunkers:
+            num_random = random.randint(0, (len(all_bunkers)-1)) #numero random desde 0 hasta el numero de bunkers - 1
+            self.bunker = all_bunkers[num_random] #Asigno el bunker random al campo bunker del player
+            self.state = '2' #Cambio el estado de 'yermo' a 'bunker'
+        else:
+            raise ValidationError('No hay bunkers donde ir')
+
     
     def leave_bunker(self):
         self.write({'bunker': [(5, 0, 0)]})#'elimino' o 'limpio' el campo bunker del jugador
@@ -130,7 +134,7 @@ class player(models.Model):
     def gen_random_avatar(self):
             print("test")
             num = random.randint(1, 20)
-            img = open("../static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
+            img = open("juego/static/src/img/players_default/player_default_"+str(num)+".svg", "rb")
             imgLeer = img.read()
             for p in self:
                 p.write({'avatar':base64.b64encode(imgLeer)})
@@ -269,6 +273,9 @@ class bunker(models.Model):
         if int(self.name)<100:
             return {'warning':{'title':'Wrong bunker name', 'message':'Bunker name must be a number between 100 and 999'}}
 
+    def upgrade_bunker(self):
+        self.water_deposits = self.water_deposits+1
+        self.food_pantries = self.food_pantries+1
 
 class wastelandsearch(models.Model):
     _name = 'juego.wastelandsearch'
