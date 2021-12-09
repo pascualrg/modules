@@ -29,12 +29,12 @@
                 <div t-attf-class="oe_kanban_content">
                   <h4 style="margin-left: 10px;">
                     <a type="edit">
-                      <field name="name"></field>
+                      <field name="username"></field>
                     </a>
                   </h4>
                   <ul>
-                    <li>Bunker: <field name="bunker"></field>
-                    </li>
+                    <li>Name: <field name="name"></field></li>
+                    <li>Bunker: <field name="bunker"></field></li>
                   </ul>
                 </div>
               </div>
@@ -51,6 +51,9 @@
       <field name="arch" type="xml">
         <form>
           <header>
+            <field name="state" widget="statusbar"></field>
+            <button name="find_bunker" type="object" string="Find Bunker" class="oe_highlight"/>
+            <button name="recruit_npc" type="object" string="Recruit NPC" class="oe_highlight"/>
           </header>
           <sheet>
             <field name="avatar" widget="image"/>
@@ -143,6 +146,7 @@
       <field name="arch" type="xml">
         <form>
           <header>
+           <button name="create_random_bunker" type="object" string="Create random bunker" class="oe_highlight"/>
           </header>
           <sheet>
             <field name="bImage" widget="image"/>
@@ -156,7 +160,7 @@
               <separator string="Bunker Stats"></separator>
               <field name="population"/>
               <field name="max_population"/>
-              <field name="watter_deposits"/>
+              <field name="water_deposits"/>
               <field name="food_pantries"/>
               <field name="bottle_caps"/>
             </group>
@@ -183,7 +187,7 @@
       <field name="name">NPCs</field>
       <field name="model">juego.npc</field>
       <field name="arch" type="xml">
-        <kanban default_group_by="bunker">
+        <kanban default_group_by="bunker" > <!--banner_route="/juego/banner"-->
           <field name="id"></field>
           <field name="bunker"></field>
           <templates>
@@ -229,6 +233,7 @@
             </group>
             <group>
               <separator string="Stats"></separator>
+              <field name="level"/>
               <field name="hunger"/>
               <field name="thirst"/>
               <field name="bottle_caps"/>
@@ -261,6 +266,7 @@
       <field name="name">Bunkers</field>
       <field name="res_model">juego.bunker</field>
       <field name="view_mode">kanban,tree,form</field>
+      
     </record>
 
 <record model="ir.actions.act_window" id="juego.action_npcs_window">
