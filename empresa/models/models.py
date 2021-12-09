@@ -65,7 +65,7 @@ class viaje(models.Model):
                m.metros_aprovechados += paquete._get_volumen()
 
     @api.constrains('paquetes')
-    def _check_dni(self):
+    def _comprobar_volumen(self):
         if self.furgoneta.capacidad < self.metros_aprovechados:
             print("DEBUUUUUUUUUUUUUUUUG:"+str(self.furgoneta.capacidad))
             raise ValidationError('Ya has llenado la furgoneta, elimina algun paquete.')
