@@ -52,7 +52,7 @@ class viaje(models.Model):
     id = fields.Char()
     metros_aprovechados = fields.Integer(compute='_get_metros_aprovechados')
     furgoneta = fields.Many2one('empresa.furgoneta',  ondelete='set null', help='La furgoneta de este viaje')
-    conductor = fields.Many2one('empresa.furgoneta',  ondelete='set null', help='La furgoneta de este viaje')
+    #conductor = fields.Many2one('empresa.furgoneta',  ondelete='set null', help='La furgoneta de este viaje')
 
     
     paquetes = fields.One2many(comodel_name='empresa.paquete', inverse_name='viaje')
@@ -64,10 +64,11 @@ class viaje(models.Model):
             for paquete in m.paquetes:
                m.metros_aprovechados += paquete._get_volumen()
 
-    @api.onchange('paquetes')
-    def _onchange_paquetes(self):
+    @api.constrains('paquetes')
+    def _check_dni(self):
         if self.furgoneta.capacidad < self.metros_aprovechados:
-            raise ValidationError('Ya has llenado la furgoneta')
+            print("DEBUUUUUUUUUUUUUUUUG:"+str(self.furgoneta.capacidad))
+            raise ValidationError('Ya has llenado la furgoneta, elimina algun paquete.')
 
     
 
