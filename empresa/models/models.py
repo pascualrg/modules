@@ -1,36 +1,75 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo.tools import image
+from odoo import _
+from odoo.exceptions import ValidationError, Warning
+import secrets
+import logging
+import re
+from odoo.exceptions import ValidationError
+from odoo import http
 
 
 class furgoneta(models.Model):
     _name = 'empresa.furgoneta'
+    _description = 'empresa.furgoneta'
+
+    
 
     matricula = fields.Char()
-    capacidad = fields.Integer()
+    name = fields.Char()
+    capacidad = fields.Integer(string="Capadidad (m3)")
     foto = fields.Image()
-    paquetes = fields.Many2many('empresa.paquete', related='viaje.paquetes', readonly=True)
+    paquetes = fields.One2many(comodel_name='empresa.paquete', inverse_name='furgoneta', readonly=True)
+    viajes = fields.One2many(comodel_name='empresa.viaje', inverse_name='furgoneta', readonly=True)
 
+    
 
 class paquete(models.Model):
     _name = 'empresa.paquete'
+    _description = 'empresa.paquete'
 
+
+    name = fields.Char()
     id = fields.Char()
-    volumen = fields.Integer()
+    volumen = fields.Integer(string="Volumen (m3)")
 
+    viaje = fields.Many2one('empresa.viaje',  ondelete='set null', help='El viaje donde va el paquete', readonly=True)
+    furgoneta = fields.Many2one('empresa.furgoneta', related='viaje.furgoneta', ondelete='set null', help='La furgoneta donde va el paquete', readonly=True)
+
+    def _get_volumen(self):
+        return self.volumen
+
+
+    
+
+#un viaje solo una furgoneta
 class viaje(models.Model):
     _name = 'empresa.viaje'
+    _description = 'empresa.viaje'
 
+    name = fields.Char()
     id = fields.Char()
-    furgoneta = fields.One2many()
-    paquetes = fields.One2many('empresa.paquete', 'viaje', readonly=True)
+    metros_aprovechados = fields.Integer(compute='_get_metros_aprovechados')
+    furgoneta = fields.Many2one('empresa.furgoneta',  ondelete='set null', help='La furgoneta de este viaje')
+    conductor = fields.Many2one('empresa.furgoneta',  ondelete='set null', help='La furgoneta de este viaje')
 
-    teachers = fields.Many2many(comodel_name='empresa.conductor',
-                                relation='teachers_classrooms',
-                                column1='classroom_id',
-                                column2='school_teacher_id')
-    conductor = fields.One2many()
+    
+    paquetes = fields.One2many(comodel_name='empresa.paquete', inverse_name='viaje')
+
+    
+    def _get_metros_aprovechados(self):
+        for m in self:
+            m.metros_aprovechados = 0 #Si no hay npcs, será 0
+            for paquete in m.paquetes:
+               m.metros_aprovechados += paquete._get_volumen()
+
+    @api.onchange('paquetes')
+    def _onchange_paquetes(self):
+        if self.furgoneta.capacidad < self.metros_aprovechados:
+            raise ValidationError('Ya has llenado la furgoneta')
+
+    
 
 
 

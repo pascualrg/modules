@@ -1,60 +1,132 @@
 <odoo>
   <data>
-    <!-- explicit list view definition -->
-<!--
-    <record model="ir.ui.view" id="empresa.list">
-      <field name="name">empresa list</field>
-      <field name="model">empresa.empresa</field>
+    <!--Furgoneta-->
+
+
+    <record model="ir.ui.view" id="empresa.furgoneta_list">
+      <field name="name">Furgonetas</field>
+      <field name="model">empresa.furgoneta</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
+          <field name="matricula"/>
+          <field name="capacidad"/>
+          <field name="paquetes"/>
+          <field name="viajes"/>
+
         </tree>
       </field>
     </record>
--->
 
-    <!-- actions opening views on models -->
-<!--
-    <record model="ir.actions.act_window" id="empresa.action_window">
-      <field name="name">empresa window</field>
-      <field name="res_model">empresa.empresa</field>
-      <field name="view_mode">tree,form</field>
-    </record>
--->
-
-    <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="empresa.action_server">
-      <field name="name">empresa server</field>
-      <field name="model_id" ref="model_empresa_empresa"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
+    <record model="ir.ui.view" id="empresa.furgoneta_form">
+      <field name="name">Furgoneta form</field>
+      <field name="model">empresa.furgoneta</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <field name="foto" widget="image"/>
+            <group>
+              <separator string="Datos furgoneta"></separator>
+              <field name="name"/>
+              <field name="matricula"/>
+              <field name="capacidad"/>
+              <field name="paquetes"/>
+            </group>
+            <!--<notebook>
+              <page string="Teachers">
+                <field name="teachers">
+                  <tree>
+                    <field name="name"/>
+                    <field name="topic"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+            -->
+          </sheet>
+        </form>
       </field>
     </record>
--->
 
-    <!-- Top menu item -->
-<!--
-    <menuitem name="empresa" id="empresa.menu_root"/>
+    <record model="ir.actions.act_window" id="empresa.action_furgoneta_window">
+      <field name="name">Furgonetas</field>
+      <field name="res_model">empresa.furgoneta</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!--Paquete-->
+
+    <record model="ir.ui.view" id="empresa.paquete_list">
+      <field name="name">Paquetes</field>
+      <field name="model">empresa.paquete</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+            <field name="id"/>
+            <field name="viaje"/>
+            <field name="furgoneta"/>
+          </tree>
+        </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="empresa.action_paquete_window">
+        <field name="name">Paquetes</field>
+        <field name="res_model">empresa.paquete</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+
+      <!--Viaje-->
+
+      <record model="ir.ui.view" id="empresa.viaje_list">
+        <field name="name">Viajes</field>
+        <field name="model">empresa.viaje</field>
+        <field name="arch" type="xml">
+          <tree>
+              <field name="name"/>
+              <field name="id"/>
+              <field name="metros_aprovechados"/>
+              <field name="furgoneta"/>
+            </tree>
+          </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="empresa.action_viaje_window">
+          <field name="name">Viajes</field>
+          <field name="res_model">empresa.viaje</field>
+          <field name="view_mode">tree,form</field>
+          <field name="context">{'search_default_agrupar_por_furgo': 1}</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="empresa.viaje_search">
+          <field name="name">Viajes</field>
+          <field name="model">empresa.viaje</field>
+          <field name="arch" type="xml">
+            <search>
+              <field name="id"/>
+              <filter name="agrupar_por_furgo" string="Agrupar por furgoneta" context="{'group_by':'furgoneta'}"></filter>
+            </search>
+          </field>
+        </record>
+
+        <!-- Top menu item -->
+
+        <menuitem name="Empresa" id="empresa.menu_root"/>
+
+        <!-- menu categories -->
+
+        <menuitem name="Empresa" id="empresa.menu_1" parent="empresa.menu_root"/>
+
+        <!-- actions -->
+
+        <menuitem name="Furgonetas" id="empresa.menu_furgoneta_list" parent="empresa.menu_1" action="empresa.action_furgoneta_window"/>
+        <menuitem name="Paquetes" id="empresa.menu_paquete_list" parent="empresa.menu_1" action="empresa.action_paquete_window"/>
+        <menuitem name="Viajes" id="empresa.menu_viaje_list" parent="empresa.menu_1" action="empresa.action_viaje_window"/>
+
+        <!-- <menuitem name="Bunkers" id="juego.menu_bunkers_list" parent="juego.menu_1" action="juego.action_bunkers_window"/>
+    <menuitem name="NPCs" id="juego.menu_npcs_list" parent="juego.menu_1" action="juego.action_npcs_window"/>
+    <menuitem name="Wasteland searchs" id="juego.menu_wastelandsearch_calendar" parent="juego.menu_1" action="juego.action_wastelandsearchs_window"/>
 -->
-    <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="empresa.menu_1" parent="empresa.menu_root"/>
-    <menuitem name="Menu 2" id="empresa.menu_2" parent="empresa.menu_root"/>
--->
-    <!-- actions -->
-<!--
-    <menuitem name="List" id="empresa.menu_1_list" parent="empresa.menu_1"
-              action="empresa.action_window"/>
-    <menuitem name="Server to list" id="empresa" parent="empresa.menu_2"
-              action="empresa.action_server"/>
--->
-  </data>
-</odoo>
+      </data>
+    </odoo>

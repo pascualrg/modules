@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_empresa_empresa,empresa.empresa,model_empresa_empresa,base.group_user,1,1,1,1
+access_empresa_furgoneta,empresa.furgoneta,model_empresa_furgoneta,base.group_user,1,1,1,1
+access_empresa_paquete,empresa.paquete,model_empresa_paquete,base.group_user,1,1,1,1
+access_empresa_viaje,empresa.viaje,model_empresa_viaje,base.group_user,1,1,1,1
