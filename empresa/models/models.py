@@ -10,6 +10,8 @@ class furgoneta(models.Model):
     matricula = fields.Char()
     capacidad = fields.Integer()
     foto = fields.Image()
+    paquetes = fields.Many2many('empresa.paquete', related='viaje.paquetes', readonly=True)
+
 
 class paquete(models.Model):
     _name = 'empresa.paquete'
