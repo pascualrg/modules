@@ -1,0 +1,183 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="juego.players_list">
+            <field name="name">Players</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="avatar" widget="image" class="imagen_player_lista" />
+                    <field name="username" />
+                    <field name="name" />
+                    <field name="lugar" string="Location" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="juego.players_search">
+            <field name="name">Players Search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" />
+                    <filter name="is_player_filter" string="Is Player" domain="[('is_player','=',True)]" />
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.players_kanban">
+            <field name="name">Players</field>
+            <field name="model">res.partner</field>
+            <field name="priority">17</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="lugar">
+                    <field name="id"></field>
+                    <field name="bunker"></field>
+                    <field name="lugar"></field>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.bunker.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <a type="open">
+                                    <img style="border-radius: 100px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('res.partner','avatar',record.id.value)" t-att-alt="record.name.value" />
+                                </a>
+                                <div t-attf-class="oe_kanban_content">
+                                    <h4 style="margin-left: 10px;">
+                                        <a type="edit">
+                                            <field name="username"></field>
+                                        </a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            Name:
+                                            <field name="name"></field>
+                                        </li>
+                                        <li attrs="{'invisible':[('lugar','=','1')]}">
+                                            Bunker:
+                                            <field name="bunker"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.players_form">
+            <field name="name">Players</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="lugar" widget="statusbar"></field>
+                        <button name="show_player_progress" type="object" string="Show Progress" class="oe_highlight" />
+                        <button attrs="{'invisible':[('lugar','=','2')]}" domain="[('lugar','=',lugar)]" name="find_bunker" type="object" string="Find Bunker" class="oe_highlight" />
+                        <button attrs="{'invisible':[('lugar','=','1')]}" domain="[('lugar','=',lugar)]" name="leave_bunker" type="object" string="Leave Bunker" confirm="Are you sure you want to do this? All npc will stop being with you" class="oe_highlight" />
+                        <button attrs="{'invisible':[('lugar','=','1')]}" domain="[('lugar','=',lugar)]" name="recruit_npc" type="object" string="Recruit NPC" class="oe_highlight" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box">
+                            <button name="gen_random_avatar" class="oe_stat_button" type="object" icon="fa-random">
+                                <span class="o_stat_text">Random avatar</span>
+                            </button>
+                        </div>
+                        <field name="avatar" widget="image" />
+                        <group>
+                            <separator string="Account Info"></separator>
+                            <field name="is_player" />
+                            <field name="username" />
+                            <field name="password" password="True" />
+                            <field name="register_date" />
+
+                        </group>
+                        <group>
+                            <separator string="Personal Data"></separator>
+                            <field name="name" />
+                            <field name="birth_year" />
+                        </group>
+                        <group attrs="{'invisible':[('lugar','=','1')]}" domain="[('lugar','=',lugar)]">
+                            <separator string="Game Data"></separator>
+                            <!--<field name="bunker" type="open" />-->
+                            <field name="bunkerImg" string="Player bunker" class="imagen_bunker_lista" type="open" widget="image" />
+                            <field name="level" />
+                        </group>
+                        <notebook>
+                            <page string="NPCs" attrs="{'invisible':[('lugar','=','1')]}" domain="[('lugar','=',lugar)]">
+                                <field name="npcs" mode="kanban">
+                                    <kanban create="false">
+                                        <field name="id"></field>
+                                        <field name="bunker"></field>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                                                    <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.npc', 'avatar', record.id.value, placeholder)}')"></div>
+                                                    <div class="oe_kanban_details d-flex flex-column">
+                                                        <a type="open">
+                                                            <h4 class="o_kanban_record_title oe_partner_heading">
+                                                                <field name="name" />
+                                                            </h4>
+                                                        </a>
+                                                        <ul>
+                                                            <!--
+                                    <li>Hunger: <field name="hunger"/>
+                                    </li>
+                                    <li>Thirst: <field name="thirst"/>
+                                    </li>
+                                    <li>Bottle caps: <field name="bottle_caps"/>
+                                    </li>
+                                    -->
+                                                            <li>
+                                                                Location:
+                                                                <field name="lugar" />
+                                                            </li>
+                                                        </ul>
+                                                        <button attrs="{'invisible':[('lugar','=','3')]}" domain="[('lugar','=',lugar)]" name="start_searching" type="object" string="Go Search" class="btn btn-primary oe_kanban_action oe_kanban_action_button">Go search</button>
+                                                        <button attrs="{'invisible':[('lugar','=','3')]}" domain="[('lugar','=',lugar)]" name="leave_bunker_npc" type="object" string="Leave bunker" class="btn btn-danger o_form_button_delete" confirm="Are you sure you want to do this? This npc is going to leave you ">Leave npc</button>
+                                                        <field attrs="{'invisible':[('lugar','=','2')]}" name="search_progress" widget="progressbar"/>
+                                                        <button attrs="{'invisible':[('lugar','=','2')]}" domain="[('lugar','=',lugar)]" name="update_wastelandsearch" type="object" string="Update Progress" class="btn btn-primary oe_kanban_action oe_kanban_action_button">Update Search Progress</button>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.player_progress_graph">
+            <field name="name">juego.player_progress</field>
+            <field name="model">juego.player_progress</field>
+            <field name="arch" type="xml">
+                <graph string="Player Level Progress" type="line">
+                    <field name="date_char" type="row" />
+                    <field name="player" type="col" />
+                    <field name="name" type="measure" />
+                </graph>
+            </field>
+        </record>
+
+
+        <record model="ir.cron" forcecreate="True" id="juego.cron_players_progress">
+            <field name="name">Juego: Cron Players Progress</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="state">code</field>
+            <field name="code">model.update_players_progress()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="activity_user_type">specific</field>
+            <field name="doall" eval="False" />
+        </record>
+
+    </data>
+
+</odoo>

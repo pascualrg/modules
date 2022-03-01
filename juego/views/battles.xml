@@ -1,0 +1,118 @@
+<odoo>
+
+    <data>
+
+        <record model="ir.ui.view" id="juego.battle_list">
+            <field name="name">Battles</field>
+            <field name="model">juego.battle</field>
+            <field name="arch" type="xml">
+                <!-- create="false" -->
+                <tree create="false">
+                    <field name="name" string="Battle"/>
+                    <field name="winner_name" string="Winner"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="juego.battles_form" model="ir.ui.view">
+            <field name="name">juego.battle.form</field>
+            <field name="model">juego.battle</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false" action="false">
+                    <header>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <group>
+                            <separator string="Bunker 1"></separator>
+
+                            <field name="bunker1" string="Name" />
+                            <field name="bunker1_team" string="Team" widget="many2many_tags" attrs="{'invisible':[('bunker1','=',False)],'required': [('bunker1','=',True)]}" />
+
+                            <!-- widget="many2many_tags" -->
+
+                        </group>
+                        <group>
+                            <separator string="Bunker 2"></separator>
+                            <field name="bunker2" string="Name" />
+                            <field name="bunker2_team" string="Team" widget="many2many_tags" attrs="{'invisible':[('bunker2','=',False)],'required': [('bunker2','=',True)]}" />
+
+                        </group>
+
+                        <group>
+                            <separator string="Battle Resume"></separator>
+                            <field name="percentage_to_bet" string="Percentage to bet" readonly="True"/>
+                            <field name="caps_bet_qty" string="Staked caps"/>
+                            <field name="winner_name" string="Winner"/>
+                            <field name="loser_name" string="Loser"/>
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!--Wizard batallas-->
+
+
+        <record id="juego.create_battle_form" model="ir.ui.view">
+            <field name="name">juego.create.battle.form</field>
+            <field name="model">juego.create_battle</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <group states="1">
+
+                            <group>
+                                <separator string="Bunker 1"></separator>
+
+                                <field name="bunker1" />
+                                <field name="bunker1_team" attrs="{'invisible':[('bunker1','=',False)],'required': [('bunker1','=',True)]}" />
+
+                                <!-- widget="many2many_tags" -->
+
+                            </group>
+                            <group>
+                                <separator string="Bunker 2"></separator>
+                                <field name="bunker2" />
+                                <field name="bunker2_team" attrs="{'invisible':[('bunker2','=',False)],'required': [('bunker2','=',True)]}" />
+
+                            </group>
+
+                        </group>
+                        <group states="2">
+                            <separator string="Battle Conditions"></separator>
+                            <field name="percentage_to_bet"></field>
+                            <field name="caps_bet_qty"></field>
+                        </group>
+                        <group states="3">
+
+                            <field name="winner_name" />
+                            <field name="loser_name" />
+                    
+                        </group>
+
+                        <footer>
+                            <button name="previous" type="object" string="Previous" class="oe_highlight" states="2,3" />
+                            <button name="next" type="object" string="Next" class="oe_highlight" states="1" />
+                            <button name="start_battle" type="object" string="Start" class="oe_highlight" states="2" />
+                            <button name="save_battle" type="object" string="Save Battle" class="oe_highlight" states="3" />
+                        </footer>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+
+
+</odoo>

@@ -1,5 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_juego_player,juego.player,model_juego_player,base.group_user,1,1,1,1
 access_juego_npc,juego.npc,model_juego_npc,base.group_user,1,1,1,1
 access_juego_bunker,juego.bunker,model_juego_bunker,base.group_user,1,1,1,1
 access_juego_wastelandsearch,juego.wastelandsearch,model_juego_wastelandsearch,base.group_user,1,1,1,1
+access_juego_player_progress,juego.player_progress,model_juego_player_progress,base.group_user,1,1,1,1
+access_juego_bunker_population_progress,juego_bunker_population_progress,model_juego_bunker_population_progress,base.group_user,1,1,1,1
+access_juego_battle,juego.battle,model_juego_battle,base.group_user,1,1,1,1
+access_juego_create_battle,juego.battle,model_juego_create_battle,base.group_user,1,1,1,1
+access_juego_transfer,juego.battle,model_juego_transfer,base.group_user,1,1,1,1
+access_juego_create_transfer,juego.battle,model_juego_create_transfer,base.group_user,1,1,1,1

@@ -1,0 +1,98 @@
+<odoo>
+  <data>
+
+    <record model="ir.actions.act_window" id="juego.action_players_window">
+      <field name="name">Players</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">kanban,tree,form</field>
+      <field name="domain"></field>
+      <!--<field name="domain">[('is_player','=','True')]</field> //con este domain, solo se verian los jugadores, con o sin filtro-->
+      <field name="context">{'search_default_is_player_filter':1,'default_is_player':True}</field>
+      <field name="view_ids" eval="[
+      (5, 0, 0),
+      (0, 0, {'view_mode': 'kanban', 'view_id': ref('juego.players_kanban')}),
+      (0, 0, {'view_mode': 'tree', 'view_id': ref('juego.players_list')}),
+      (0, 0, {'view_mode': 'form', 'view_id': ref('juego.players_form')})
+      ]" />
+    </record>
+
+    <record model="ir.actions.act_window" id="juego.action_bunkers_window">
+      <field name="name">Bunkers</field>
+      <field name="res_model">juego.bunker</field>
+      <field name="view_mode">kanban,tree,form</field>
+
+    </record>
+
+    <record model="ir.actions.act_window" id="juego.action_npcs_window">
+      <field name="name">NPCs</field>
+      <field name="res_model">juego.npc</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="juego.action_wastelandsearchs_window">
+      <field name="name">Wastelands searchs</field>
+      <field name="res_model">juego.wastelandsearch</field>
+      <field name="view_mode">calendar</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="juego.action_battles_window">
+      <field name="name">Battles</field>
+      <field name="res_model">juego.battle</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="juego.action_transfers_window">
+      <field name="name">Transfers</field>
+      <field name="res_model">juego.transfer</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="juego.action_create_battle" model="ir.actions.act_window">
+    	<field name="name">Create Battle</field>
+    	<field name="type">ir.actions.act_window</field>
+    	<field name="res_model">juego.create_battle</field>
+    	<field name="view_mode">form</field>
+    	<field name="view_id" ref="juego.create_battle_form" />
+    	<field name="target">new</field>
+	</record>
+
+  <record model="ir.actions.act_window" id="juego.action_create_transfer">
+    <field name="name">Create Transfer</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">juego.create_transfer</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="juego.create_transfer_form" />
+    <field name="target">new</field>
+</record>
+
+    <record model="ir.actions.server" id="juego.bunker_vaciar_actionserver">
+      <field name="name">Vaciar Bunker</field>
+      <field name="model_id" ref="model_juego_bunker"/>
+      <field name="binding_model_id" ref="model_juego_bunker"></field>
+      <field name="state">code</field>
+      <field name="code">model.vaciar_bunker(records)</field>
+    </record>
+
+
+    <!-- Top menu item -->
+
+    <menuitem name="Juego" id="juego.menu_root"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Juego" id="juego.menu_1" parent="juego.menu_root"/>
+    <menuitem name="Create Battle" id="juego.menu_create_battle" parent="juego.menu_root" action="juego.action_create_battle"/>
+    <menuitem name="Create Transfer" id="juego.menu_create_transfer" parent="juego.menu_root" action="juego.action_create_transfer"/>
+    
+  
+
+    <!-- actions -->
+
+    <menuitem name="Players" id="juego.menu_players_list" parent="juego.menu_1" action="juego.action_players_window"/>
+    <menuitem name="Bunkers" id="juego.menu_bunkers_list" parent="juego.menu_1" action="juego.action_bunkers_window"/>
+    <menuitem name="NPCs" id="juego.menu_npcs_list" parent="juego.menu_1" action="juego.action_npcs_window"/>
+    <menuitem name="Wasteland searchs" id="juego.menu_wastelandsearch_calendar" parent="juego.menu_1" action="juego.action_wastelandsearchs_window"/>
+    <menuitem name="Battles" id="juego.menu_battles_list" parent="juego.menu_1" action="juego.action_battles_window"/>
+    <menuitem name="Transfers" id="juego.menu_transfers_list" parent="juego.menu_1" action="juego.action_transfers_window"/>
+    </data>
+</odoo>

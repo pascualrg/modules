@@ -1,0 +1,38 @@
+<odoo>
+
+    <data>
+
+        <record model="ir.ui.view" id="juego.wastelandsearchs_calendar">
+            <field name="name">Wasteland Search</field>
+            <field name="model">juego.wastelandsearch</field>
+            <field name="arch" type="xml">
+                <calendar quick_add="False" mode="day" string="Wasteland Search" date_start="start" date_delay="minutes" color="npc">
+                    <!--date_finish="" -->
+
+                    <field name="npc"/>
+                    <field name="start"/>
+                    <field name="finish"/>
+                    <field name="state" />
+                    <field name="progress" widget="progressbar"/>
+                </calendar>
+            </field>
+        </record>
+
+
+        <record model="ir.cron" forcecreate="True" id="juego.cron_wasteland_search_update">
+            <field name="name">Juego: Cron Wasteland Search Update</field>
+            <field name="model_id" ref="model_juego_wastelandsearch"/>
+            <field name="state">code</field>
+            <field name="code">model.update_wastelandsearch()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="activity_user_type">specific</field>
+            <field name="doall" eval="False" />
+        </record>
+
+    </data>
+
+
+</odoo>

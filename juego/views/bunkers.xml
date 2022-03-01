@@ -1,0 +1,209 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="juego.bunkers_list">
+            <field name="name">Bunkers</field>
+            <field name="model">juego.bunker</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="food&lt;10 or water&lt;10" decoration-warning="food&lt;25 or water&lt;25">
+                    <field name="bImage" widget="image" class="imagen_bunker_lista" />
+                    <field name="name" />
+                    <field name="population" />
+                    <field name="food" />
+                    <field name="water" />
+                    <field name="bottle_caps" />
+
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="juego.bunkers_kanban">
+            <field name="name">Bunkers</field>
+            <field name="model">juego.bunker</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id"></field>
+                    <field name="name"></field>
+                    <templates>
+                        <t t-extend="ImportView.import_button">
+                            <t t-jquery="button.o_button_import" t-operation="after">
+                                <button name="button_import" type="button" t-if='widget.bunker == "juego.bunker"' class="btn btn-sm btn-default o_import_button o_import_import">Create random bunker</button>
+                            </t>
+                        </t>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.name.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <a type="open">
+                                    <img style="border-radius: 100px; border: 1px solid #000" class="oe_kanban_image bunkerIMG" heigh="100" width="100" t-att-src="kanban_image('juego.bunker','bImage',record.id.value)" t-att-alt="record.name.value" />
+                                </a>
+                                <div t-attf-class="oe_kanban_content">
+                                    <h4 style="margin-left: 10px;">
+                                        <a type="open">
+                                            Bunker
+                                            <field name="name"></field>
+                                        </a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            Population:
+                                            <field name="population"></field>
+                                        </li>
+                                        <li>
+                                            Food:
+                                            <field name="food"></field>
+                                        </li>
+                                        <li>
+                                            Water:
+                                            <field name="water"></field>
+                                        </li>
+                                        <li>
+                                            Total bottle caps:
+                                            <field name="bottle_caps"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.bunkers_form">
+            <field name="name">Bunkers</field>
+            <field name="model">juego.bunker</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="show_bunker_population_progress" type="object" string="Show Population Progress" class="oe_highlight" />
+                        <button name="create_random_bunker" type="object" string="Create random bunker" class="oe_highlight" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box">
+                            <button name="upgrade_bunker" class="oe_stat_button" type="object" icon="fa-level-up">
+                                <span class="o_stat_text">Upgrade bunker</span>
+                            </button>
+                        </div>
+                        <field name="bImage" widget="image" />
+                        <group>
+                            <separator string="Bunker info"></separator>
+                            <field name="name" />
+                        </group>
+                        <group>
+                            <separator string="Bunker Stats"></separator>
+                            <field name="population" />
+                            <field name="max_population" />
+                            <field name="water_deposits" />
+                            <field name="food_pantries" />
+                            <field name="bottle_caps" />
+                        </group>
+                        <notebook>
+                            <page string="NPCs">
+                                <field name="npcs" mode="kanban">
+                                    <kanban default_group_by="bunker" create="false">
+                                        <!--banner_route="/juego/banner"-->
+                                        <field name="id"></field>
+                                        <field name="bunker"></field>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                                                    <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('juego.npc', 'avatar', record.id.value, placeholder)}')"></div>
+                                                    <div class="oe_kanban_details d-flex flex-column">
+                                                        <a type="open">
+                                                            <h4 class="o_kanban_record_title oe_partner_heading">
+                                                                <field name="name" />
+                                                            </h4>
+                                                        </a>
+                                                        <ul>
+                                                            <li>
+                                                                Hunger:
+                                                                <field name="hunger" />
+                                                            </li>
+                                                            <li>
+                                                                Thirst:
+                                                                <field name="thirst" />
+                                                            </li>
+                                                            <li>
+                                                                Bottle caps:
+                                                                <field name="bottle_caps" />
+                                                            </li>
+                                                            <li>
+                                                                Player:
+                                                                <field name="player" />
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                            <page string="Players">
+                                <field name="players" mode="kanban">
+                                    <kanban create="false">
+                                        <field name="id"></field>
+                                        <field name="bunker"></field>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
+                                                    <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('res.partner', 'avatar', record.id.value, placeholder)}')"></div>
+                                                    <div class="oe_kanban_details d-flex flex-column">
+                                                        <a type="open">
+                                                            <h4 class="o_kanban_record_title oe_partner_heading">
+                                                                <field name="username" />
+                                                            </h4>
+                                                        </a>
+                                                        <ul>
+                                                            <li>
+                                                                Location:
+                                                                <field name="lugar" />
+                                                            </li>
+                                                            <!--<li>Progress search: <field name="wastelandsearchs" widget="gauge" /></li>-->
+                                                            <li>
+                                                                Name:
+                                                                <field name="name" />
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.cron" forcecreate="True" id="juego.cron_bunker_population_progress">
+            <field name="name">Juego: Cron Bunker Population Progress</field>
+            <field name="model_id" ref="model_juego_bunker" />
+            <field name="state">code</field>
+            <field name="code">model.update_bunker_population_progress()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="activity_user_type">specific</field>
+            <field name="doall" eval="False" />
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.bunker_population_progress_graph">
+            <field name="name">juego.bunker_population_progress</field>
+            <field name="model">juego.bunker_population_progress</field>
+            <field name="arch" type="xml">
+                <graph string="Bunker Population Progress" type="line">
+                    <field name="date_char" type="row" />
+                    <field name="bunker" type="col" />
+                    <field name="name" type="measure" />
+                </graph>
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

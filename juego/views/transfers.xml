@@ -1,0 +1,99 @@
+<odoo>
+
+    <data>
+
+        <record model="ir.ui.view" id="juego.transfer_list">
+            <field name="name">Battles</field>
+            <field name="model">juego.transfer</field>
+            <field name="arch" type="xml">
+                <!-- create="false" -->
+                <tree create="false">
+                    <field name="name" string="Transfer"/>
+                    <field name="npc1" string="Origin"/>
+                    <field name="npc2" string="Receiver"/>
+                    <field name="caps_transfer_qty" string="Quantity"/>
+                    <field name="date_transfer" string="Transfer Date"></field>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="juego.transfer_form" model="ir.ui.view">
+            <field name="name">juego.transfer_form.form</field>
+            <field name="model">juego.transfer</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false" action="false">
+                    <header>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        
+                        <group>
+                            <separator string="Transfer Resume"></separator>
+                            <field name="npc1" string="Origin NPC" readonly="True"/>
+                            <field name="npc2" string="Receiver NPC" readonly="True"/>
+                            <field name="caps_transfer_qty" string="Transfer Amount" readonly="True"></field>
+                            <field name="date_transfer" string="Transfer Date" readonly="True"></field>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!--Wizard transferencias-->
+
+
+        <record id="juego.create_transfer_form" model="ir.ui.view">
+            <field name="name">juego.create.transfer.form</field>
+            <field name="model">juego.create_transfer</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <group states="1">
+
+                            <group>
+                                <separator string="NPC Origin"></separator>
+                                <field name="npc1" string="Select NPC"/>
+                                <field name="npc1_caps" string="Total NPC caps" attrs="{'invisible':[('npc1','=',False)],'required': [('npc1','=',True)]}" />
+                            </group>
+                            <group>
+                                <separator string="NPC Receiver"></separator>
+                                <field name="npc2" string="Select NPC"/>
+                                <field name="npc2_caps" string="Total NPC caps" attrs="{'invisible':[('npc2','=',False)],'required': [('npc2','=',True)]}" />
+                            </group>
+
+                        </group>
+                        <group states="2">
+                            <separator string="Transfer Data"></separator>
+                            <field name="caps_transfer_qty"></field>
+                        </group>
+                        <group states="3">
+                            <separator string="Transfer Resume"></separator>
+                            <field name="npc1_name" string="Origin NPC" readonly="True"/>
+                            <field name="npc2_name" string="Receiver NPC" readonly="True"/>
+                            <field name="caps_transfer_qty_resume" string="Transfer Amount" readonly="True"></field>
+
+                        </group>
+
+                        <footer>
+                            <button name="previous" type="object" string="Previous" class="oe_highlight" states="2,3" />
+                            <button name="next" type="object" string="Next" class="oe_highlight" states="1,2" />
+                            <button name="send_transfer" type="object" string="Send Transfer" class="oe_highlight" states="3" />
+                        </footer>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+
+
+</odoo>

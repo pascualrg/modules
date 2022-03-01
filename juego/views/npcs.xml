@@ -1,0 +1,117 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="juego.npcs_list">
+            <field name="name">NPCs</field>
+            <field name="model">juego.npc</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="thirst&lt;10 or hunger&lt;10" decoration-warning="thirst&lt;20 or hunger&lt;20" create="false">
+                    <!--create="false" para quitar el boton crear en los npcs-->
+                    <field name="avatar" widget="image" class="imagen_npc_lista" />
+                    <field name="name" />
+                    <field name="hunger" />
+                    <field name="thirst" />
+                    <field name="bottle_caps" />
+                    <field name="player" />
+                    <field name="bunker" />
+                    <field name="level" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="juego.npcs_search">
+            <field name="name">NPC Search</field>
+            <field name="model">juego.npc</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" />
+                    <field name="player" />
+                    <field name="level" />
+                    <filter name="sedientos" string="Thirsty NPCs" domain="[('thirst','&lt;=',9)]"></filter>
+                    <filter name="hambrientos" string="Hungry NPCs" domain="[('hunger','&lt;=',9)]"></filter>
+                    <field name="bottle_caps" string="Minimal bottle caps" filter_domain="[('bottle_caps','>=',self)]" />
+                    <filter name="agrupar_jefes" string="Group by Boss" context="{'group_by':'player'}"></filter>
+                    <filter name="agrupar_location" string="Group by Location" context="{'group_by':'lugar'}"></filter>
+
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.npcs_kanban">
+            <field name="name">NPCs</field>
+            <field name="model">juego.npc</field>
+            <field name="arch" type="xml">
+                <!--create="false" para quitar el boton crear en los npcs-->
+                <kanban default_group_by="player" create="false">
+                    <!--banner_route="/juego/banner"-->
+                    <field name="id"></field>
+                    <field name="bunker"></field>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.bunker.raw_value)}} oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <a type="open">
+                                    <img style="border-radius: 4px; border: 1px solid #000" class="oe_kanban_image" heigh="100" width="100" t-att-src="kanban_image('juego.npc','avatar',record.id.value)" t-att-alt="record.name.value" />
+                                </a>
+                                <div t-attf-class="oe_kanban_content">
+                                    <h4 style="margin-left: 10px;">
+                                        <a type="open">
+                                            <field name="name"></field>
+                                        </a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            Bunker:
+                                            <field name="bunker"></field>
+                                        </li>
+                                        <li>
+                                            Boss:
+                                            <field name="player"></field>
+                                        </li>
+                                        <li>
+                                            Bottle caps:
+                                            <field name="bottle_caps"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+
+
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="juego.npcs_form">
+            <field name="name">NPCs</field>
+            <field name="model">juego.npc</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false" action="false">
+                    <header>
+                        <field name="lugar" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <field name="avatar" widget="image" class="imagen_npc_kanban" />
+                        <group>
+                            <separator string="Personal Data"></separator>
+                            <field name="name" />
+                            <field name="player" />
+                            <field name="bunker" />
+                        </group>
+                        <group>
+                            <separator string="Stats"></separator>
+                            <field name="level" />
+                            <field name="hunger" />
+                            <field name="thirst" />
+                            <field name="bottle_caps" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+
+</odoo>
