@@ -1,77 +1,71 @@
 <odoo>
   <data>
 
-    <record model="ir.ui.view" id="preexamen.colegio_list">
-      <field name="name">colegio list</field>
-      <field name="model">preexamen.colegio</field>
+    <record model="ir.ui.view" id="preexamen.cancion_list">
+      <field name="name">cancion list</field>
+      <field name="model">preexamen.cancion</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name" />
-          <field name="clases" />
-          <field name="alumnos" />
-          <field name="profesores" />
+          <field name="artista" />
+          <field name="popularidad" />
         </tree>
       </field>
     </record>
 
-    <record model="ir.ui.view" id="preexamen.clase_list">
-      <field name="name">clase list</field>
-      <field name="model">preexamen.clase</field>
+    <record model="ir.ui.view" id="preexamen.cliente_list">
+      <field name="name">Clientes</field>
+      <field name="model">res.partner</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name" />
-          <field name="profesores" />
-          <field name="alumnos" />
         </tree>
       </field>
     </record>
 
 
-
-    <record model="ir.ui.view" id="preexamen.alumno_wizard_form">
-      <field name="name">alumno wizard form</field>
-      <field name="model">preexamen.alumno_wizard</field>
+    <record model="ir.ui.view" id="preexamen.cancion_wizard_form">
+      <field name="name">cancion wizard form</field>
+      <field name="model">preexamen.cancion_wizard</field>
       <field name="arch" type="xml">
-          <form>
-              <sheet>
-              <group>
-                <field name="name"/>
-              </group>
-              <footer>
-                  <button name="create_alumno" type="object"
-                          string="Crear" class="oe_highlight"/>
-                  <button special="cancel" string="Cancelar"/>
-                  </footer>
-              </sheet>
-          </form>
+        <form>
+          <sheet>
+            <group>
+              <field name="cancion" />
+              <field name="cliente"/>
+            </group>
+            <footer>
+              <button name="cancion_favorita" type="object" string="Añadir Favorita" class="oe_highlight" />
+              <button special="cancel" string="Cancelar" />
+            </footer>
+          </sheet>
+        </form>
       </field>
     </record>
-    
 
-    <record id="preexamen.action_alumno_wizard" model="ir.actions.act_window">
-      <field name="name">Lanzar alumno wizard</field>
+
+    <record id="preexamen.action_cancion_wizard" model="ir.actions.act_window">
+      <field name="name">Cancion favorita wizard</field>
       <field name="type">ir.actions.act_window</field>
-      <field name="res_model">preexamen.alumno_wizard</field>
+      <field name="res_model">preexamen.cancion_wizard</field>
       <field name="view_mode">form</field>
-      <field name="view_id" ref="preexamen.alumno_wizard_form"/>
+      <field name="view_id" ref="preexamen.cancion_wizard_form" />
       <field name="target">new</field>
     </record>
 
-    <record model="ir.ui.view" id="preexamen.clase_form" >
-      <field name="name">clase form</field>
-      <field name="model">preexamen.clase</field>
+
+    <record id="preexamen.cliente_form" model="ir.ui.view">
+      <field name="name">Clientes</field>
+      <field name="model">res.partner</field>
       <field name="arch" type="xml">
         <form>
           <header>
-            <button type="action" name="%(preexamen.action_alumno_wizard)d" string="Crear alumno" context="{'clase_id':active_id}"></button>
+            <button type="action" name="%(preexamen.action_cancion_wizard)d" string="Añadir favoritas" context="{'cliente_id':active_id}"></button>
           </header>
           <sheet>
             <group>
-              
               <field name="name" />
-              <field name="colegio"/>
-              <field name="alumnos"/>
-
+              <field name="canciones" />
             </group>
           </sheet>
         </form>
@@ -79,120 +73,49 @@
     </record>
 
 
-      
-
-    <record model="ir.ui.view" id="preexamen.alumno_list">
-      <field name="name">alumno list</field>
+    <record model="ir.ui.view" id="preexamen.cancion_inherit_form">
+      <field name="name">canciones inherit form</field>
       <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"></field>
       <field name="arch" type="xml">
-        <tree>
-          <field name="name" />
-          <field name="clase" />
-          <field name="profesores" />
-          <field name="es_alumno"/>
-          <field name="dias_cursados"/>
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="preexamen.alumno_form" >
-      <field name="name">alumno form</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-        <form>
-          <header>
-            <button name="mostrar_mas_dias" type="object" string="Mostrar Alumno con mas dias" class="oe_highlight" />
-        </header>
-          <sheet>
-            <group>
-              
-              <field name="name" />
-              <field name="clase" />
-              <field name="colegio" />
-
-            </group>
-          </sheet>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="preexamen.alumno_search">
-      <field name="name">Alumnos Search</field>
-      <field name="model">res.partner</field>
-      <field name="arch" type="xml">
-          <search>
-              <field name="name" />
-              <filter name="es_alumno_filter" string="Es alumno" domain="[('es_alumno','=',True)]" />
-          </search>
+          <notebook position="inside">
+              <page string="Canciones">
+                  <group>
+                      <field name="canciones"/>
+                  </group>
+              </page>
+          </notebook>
       </field>
   </record>
 
-    <record model="ir.ui.view" id="preexamen.profesor_list">
-      <field name="name">profesor list</field>
-      <field name="model">preexamen.profesor</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name" />
-          <field name="clases" />
-          <field name="alumnos" />
 
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="preexamen.action_colegio_window">
-      <field name="name">Colegio</field>
-      <field name="res_model">preexamen.colegio</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <record model="ir.actions.act_window" id="preexamen.action_clase_window">
-      <field name="name">Clase</field>
-      <field name="res_model">preexamen.clase</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <record model="ir.actions.act_window" id="preexamen.action_alumno_window">
-      <field name="name">Alumno</field>
+    <record model="ir.actions.act_window" id="preexamen.action_cliente_window">
+      <field name="name">Clientes</field>
       <field name="res_model">res.partner</field>
       <field name="view_mode">tree,form</field>
-      <field name="context">{'search_default_es_alumno_filter':1,'default_es_alumno':True}</field>
+      <field name="domain"></field>
       <field name="view_ids" eval="[
       (5, 0, 0),
-      (0, 0, {'view_mode': 'tree', 'view_id': ref('preexamen.alumno_list')}),
-      (0, 0, {'view_mode': 'form', 'view_id': ref('preexamen.alumno_form')})
+      (0, 0, {'view_mode': 'tree', 'view_id': ref('preexamen.cliente_list')}),
+      (0, 0, {'view_mode': 'form', 'view_id': ref('preexamen.cliente_form')})
       ]" />
     </record>
 
 
-    
-
-    
-
-
-    <record model="ir.actions.act_window" id="preexamen.action_profesor_window">
-      <field name="name">Profesor</field>
-      <field name="res_model">preexamen.profesor</field>
+    <record model="ir.actions.act_window" id="preexamen.action_cancion_window">
+      <field name="name">Canciones</field>
+      <field name="res_model">preexamen.cancion</field>
       <field name="view_mode">tree,form</field>
     </record>
 
 
-    <record model="ir.actions.server" id="preexamen.action_reset_dias">
-      <field name="name">Reset Dias</field>
-      <field name="model_id" ref="model_res_partner"/>
-      <field name="binding_model_id" ref="model_res_partner"></field>
-      <field name="state">code</field>
-      <field name="code">model.reset_dias(records)</field>
-    </record>
+    <menuitem name="Empresa" id="preexamen.menu_root" />
 
-    <menuitem name="Colegio" id="preexamen.menu_root" />
+    <menuitem name="Empresa" id="preexamen.menu_1" parent="preexamen.menu_root" />
 
-    <menuitem name="Practica" id="preexamen.menu_1" parent="preexamen.menu_root" />
+    <menuitem name="Clientes" id="preexamen_cliente" parent="preexamen.menu_1" action="preexamen.action_cliente_window" />
 
-    <menuitem name="Colegio" id="preexamen_colegio" parent="preexamen.menu_1" action="preexamen.action_colegio_window" />
-    <menuitem name="Clase" id="preexamen_clase" parent="preexamen.menu_1" action="preexamen.action_clase_window" />
-    <menuitem name="Alumno" id="preexamen_alumno" parent="preexamen.menu_1" action="preexamen.action_alumno_window" />
-    <menuitem name="Profesor" id="preexamen_profesor" parent="preexamen.menu_1" action="preexamen.action_profesor_window" />
+    <menuitem name="Canciones" id="preexamen_cancion" parent="preexamen.menu_1" action="preexamen.action_cancion_window" />
 
   </data>
 </odoo>
