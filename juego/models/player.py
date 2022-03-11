@@ -181,7 +181,7 @@ class player(models.Model):
             'context':  self._context,
             'domain': [('player', '=', self.id)]
         }
-    
+
 
 class player_progress(models.Model):
     _name = 'juego.player_progress'

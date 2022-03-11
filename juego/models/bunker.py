@@ -173,6 +173,12 @@ class bunker(models.Model):
             self.env['juego.bunker_population_progress'].create({'name': b.population, 'bunker': b.id, 'date_char': date})
 
     def show_bunker_population_progress(self):
+
+        bunkers = self.search([])
+
+        # for b in bunkers:
+        #     print(b.id)
+
         return {
             'name': 'Bunker population progress',
             'type': 'ir.actions.act_window',

@@ -30,6 +30,8 @@ class student(models.Model):
     name = fields.Char(required=True)
     birth_year = fields.Integer()
 
+    test = fields.Boolean()
+
     #def _get_password(self): 
     #    return 
 

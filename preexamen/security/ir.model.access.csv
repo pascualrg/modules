@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_preexamen_colegio,preexamen.colegio,model_preexamen_colegio,base.group_user,1,1,1,1
+access_preexamen_clase,preexamen.clase,model_preexamen_clase,base.group_user,1,1,1,1
+access_preexamen_profesor,preexamen.profesor,model_preexamen_profesor,base.group_user,1,1,1,1
+access_preexamen_alumno_wizard,preexamen.alumno_wizard,model_preexamen_alumno_wizard,base.group_user,1,1,1,1

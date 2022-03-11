@@ -47,6 +47,14 @@
       <field name="view_mode">tree,form</field>
     </record>
 
+    <record model="ir.actions.server" id="juego.bunker_vaciar_actionserver">
+      <field name="name">Vaciar Bunker</field>
+      <field name="model_id" ref="model_juego_bunker"/>
+      <field name="binding_model_id" ref="model_juego_bunker"></field>
+      <field name="state">code</field>
+      <field name="code">model.vaciar_bunker(records)</field>
+    </record>
+
     <record id="juego.action_create_battle" model="ir.actions.act_window">
     	<field name="name">Create Battle</field>
     	<field name="type">ir.actions.act_window</field>
